@@ -1,11 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EvenementsController;
+use App\Http\Controllers\EvenementController;
 
-Route::resource('evenements', EvenementsController::class);
+// Evenement
 
+Route::resource('evenements', EvenementController::class);
+Route::post('/evenements/{evenement}/inscription', [EvenementController::class, 'inscription'])->name('evenements.inscription');
+Route::delete('/evenements/{evenement}/desinscription', [EvenementController::class, 'desinscription'])->name('evenements.desinscription');
 
+// ...
 Route::get('/', function () {
     return view('welcome');
 });
