@@ -8,7 +8,7 @@ use App\Http\Controllers\EvenementController;
 Route::resource('evenements', EvenementController::class);
 Route::post('/evenements/{evenement}/inscription', [EvenementController::class, 'inscription'])->name('evenements.inscription');
 Route::delete('/evenements/{evenement}/desinscription', [EvenementController::class, 'desinscription'])->name('evenements.desinscription');
-
+Route::delete('/evenements/{evenement}', [EvenementController::class, 'destroy'])->name('evenements.destroy');
 // ...
 Route::get('/', function () {
     return view('welcome');

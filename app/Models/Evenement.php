@@ -45,4 +45,12 @@ class Evenement extends Model
     {
         return $this->date->format('d/m/Y H:i');
     }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($evenement) {
+            $evenement->participants()->detach();
+        });
+    }
 }

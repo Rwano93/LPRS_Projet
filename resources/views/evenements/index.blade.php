@@ -21,7 +21,7 @@
                     </a>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 events-list">
                     @foreach ($evenements as $evenement)
                         <div class="bg-white shadow-lg rounded-lg overflow-hidden transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl" id="evenement-{{ $evenement->id }}">
                             <div class="p-6">
@@ -86,6 +86,11 @@
         const createEventForm = document.getElementById('create-event-form');
         const inscriptionButtons = document.querySelectorAll('.inscription-btn');
         const desinscriptionButtons = document.querySelectorAll('.desinscription-btn');
+        const deleteButtons = document.querySelectorAll('.delete-event');
+
+        // Configuration globale d'Axios
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
         if (createEventForm) {
             createEventForm.addEventListener('submit', function(e) {
@@ -120,7 +125,7 @@
         }
 
         function addEventToList(evenement) {
-            const eventsList = document.querySelector('.events-list'); // Make sure you have a container with this class
+            const eventsList = document.querySelector('.events-list');
             if (eventsList) {
                 const eventElement = document.createElement('div');
                 eventElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl';
@@ -181,13 +186,17 @@
 
         function handleInscriptionClick(e, isInscription) {
             e.preventDefault();
-            const eventId = this.dataset.id;
+            const button = this;
+            const eventId = button.dataset.id;
             const url = isInscription ? `/evenements/${eventId}/inscription` : `/evenements/${eventId}/desinscription`;
             const method = isInscription ? 'post' : 'delete';
 
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner"></span> Chargement...';
+
             axios({
                 method: method,
-                url: url
+                url: url,
             })
             .then(response => {
                 Swal.fire({
@@ -199,16 +208,16 @@
                 });
 
                 // Update button state
-                this.textContent = isInscription ? '🚫 Se désinscrire' : '✅ S\'inscrire';
-                this.classList.toggle('bg-green-500');
-                this.classList.toggle('hover:bg-green-600');
-                this.classList.toggle('bg-red-500');
-                this.classList.toggle('hover:bg-red-600');
-                this.classList.toggle('inscription-btn');
-                this.classList.toggle('desinscription-btn');
+                button.textContent = isInscription ? '🚫 Se désinscrire' : '✅ S\'inscrire';
+                button.classList.toggle('bg-green-500');
+                button.classList.toggle('hover:bg-green-600');
+                button.classList.toggle('bg-red-500');
+                button.classList.toggle('hover:bg-red-600');
+                button.classList.toggle('inscription-btn');
+                button.classList.toggle('desinscription-btn');
 
                 // Update available places
-                const eventCard = this.closest('.bg-white');
+                const eventCard = button.closest('.bg-white');
                 const placesElement = eventCard.querySelector('.places-disponibles');
                 if (placesElement) {
                     let places = parseInt(placesElement.textContent);
@@ -217,13 +226,19 @@
                 }
             })
             .catch(error => {
-                Swal.fire('Erreur', error.response?.data?.message || 'Une erreur est survenue.', 'error');
+                console.error('Error:', error);
+                Swal.fire('Erreur', error.response?.data?.message || 'Une erreur inattendue est survenue.', 'error');
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.innerHTML = isInscription ? '<span aria-hidden="true">✅</span> S\'inscrire' : '<span aria-hidden="true">🚫</span> Se désinscrire';
             });
         }
 
         function handleDeleteClick(e) {
             e.preventDefault();
-            const eventId = this.dataset.id;
+            const button = this;
+            const eventId = button.dataset.id;
             
             Swal.fire({
                 title: 'Êtes-vous sûr ?',
@@ -237,19 +252,29 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     axios.delete(`/evenements/${eventId}`)
-                        .then(response => {
+                    .then(response => {
+                        if (response.data.success) {
                             Swal.fire(
                                 'Supprimé !',
                                 'L\'événement a été supprimé.',
                                 'success'
                             );
-                            // Remove the event from the DOM
-                            document.getElementById(`evenement-${eventId}`).remove();
-                        })
-                        .catch(error => {
-                            Swal.fire('Erreur', 'Une erreur est survenue lors de la suppression.', 'error');
-                            console.error('Error:', error);
-                        });
+                            // Animation de suppression
+                            const eventElement = document.getElementById(`evenement-${eventId}`);
+                            eventElement.style.transition = 'all 0.5s';
+                            eventElement.style.opacity = '0';
+                            eventElement.style.transform = 'translateY(-20px)';
+                            setTimeout(() => {
+                                eventElement.remove();
+                            }, 500);
+                        } else {
+                            Swal.fire('Erreur', response.data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Erreur', 'Une erreur est survenue lors de la suppression.', 'error');
+                    });
                 }
             });
         }
@@ -262,7 +287,7 @@
             button.addEventListener('click', function(e) { handleInscriptionClick.call(this, e, false); });
         });
 
-        document.querySelectorAll('.delete-event').forEach(button => {
+        deleteButtons.forEach(button => {
             button.addEventListener('click', handleDeleteClick);
         });
     });

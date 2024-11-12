@@ -58,7 +58,6 @@ class EvenementController extends Controller
         return response()->json(['success' => false, 'message' => 'Désinscription impossible.'], 422);
     }
 
-
     public function store(Request $request)
 {
     $validatedData = $request->validate([
@@ -73,12 +72,17 @@ class EvenementController extends Controller
 
     $evenement = Evenement::create($validatedData);
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Événement créé avec succès !',
-        'evenement' => $evenement
-    ]);
+    if ($request->ajax()) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Événement créé avec succès !',
+            'evenement' => $evenement 
+        ]);
+    }
+
+    return redirect()->route('evenements.index')->with('success', 'Événement créé avec succès !');
 }
+
     public function update(Request $request, Evenement $evenement)
     {
         $validatedData = $request->validate([
@@ -96,7 +100,17 @@ class EvenementController extends Controller
 
     public function destroy(Evenement $evenement)
     {
-        $evenement->delete();
-        return response()->json(['success' => true, 'message' => 'Événement supprimé avec succès !']);
+        try {
+            $evenement->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Événement supprimé avec succès !'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression de l\'événement.'
+            ], 500);
+        }
     }
 }
