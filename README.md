@@ -26,7 +26,7 @@ Projet LPRS. Création d'un site internet qui permet un gestion utilisateur ains
 - **PHP** : Version 8.x ou supérieure.
 - **Composer** : Gestionnaire de dépendances pour PHP.
 - **NPM** : Gestionnaire de paquets pour JavaScript.
-
+```
 ## Installation
 
 1. Clone le dépôt :
