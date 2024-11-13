@@ -5,21 +5,15 @@ use App\Http\Controllers\EvenementController;
 
 // Evenement
 
-Route::get('evenements', [EvenementController::class, 'index'])->name('evenements.index');
-Route::get('evenements/create', [EvenementController::class, 'create'])->name('evenements.create');
-Route::post('evenements/store', [EvenementController::class, 'store'])->name('evenements.store');
-Route::get('evenements/{evenement}/edit', [EvenementController::class, 'edit'])->name('evenements.edit');
-Route::put('evenements/{evenement}', [EvenementController::class, 'update'])->name('evenements.update');
-Route::delete('evenements/{evenement}', [EvenementController::class, 'destroy'])->name('evenements.destroy');
-Route::post('/evenements/{evenement}/inscription', [EvenementController::class, 'inscription'])->name('evenements.inscription');
-Route::post('/evenements/{evenement}/inscription', [EvenementController::class, 'inscription'])->name('evenements.inscription');
-Route::delete('/evenements/{evenement}/desinscription', [EvenementController::class, 'desinscription'])->name('evenements.desinscription');
-
+Route::resource('evenements', EvenementController::class);
+Route::post('/evenements/{evenement}/inscrire', [EvenementController::class, 'inscrire'])->name('evenements.inscrire');
+Route::delete('/evenements/{evenement}/desinscrire', [EvenementController::class, 'desinscrire'])->name('evenements.desinscrire');
+Route::get('/evenements/{evenement}/gerer-inscriptions', [EvenementController::class, 'gererInscriptions'])->name('evenements.gerer-inscriptions');
+Route::delete('/evenements/{evenement}/refuser-inscription/{user}', [EvenementController::class, 'refuserInscription'])->name('evenements.refuser-inscription');
 // ...
 Route::get('/', function () {
     return view('welcome');
 });
-
 
 
 Route::get('/', function () {

@@ -7,15 +7,15 @@
                     <p>{{ session('error') }}</p>
                 </div>
             @endif
-            @if (session('status'))
+            @if (session('success'))
                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
                     <p class="font-bold">Succès</p>
-                    <p>{{ session('status') }}</p>
+                    <p>{{ session('success') }}</p>
                 </div>
             @endif
             <div class="flex justify-between items-center mb-8">
                 <h1 class="text-4xl font-bold text-gray-800">Événements</h1>
-                @if(Auth::user()->role_id == 3 || Auth::user()->role_id == 4)
+                @if(Auth::user()->role->nom !== 'Gestionnaire')
                     <a href="{{ route('evenements.create') }}"
                         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
@@ -61,27 +61,27 @@
                                         <svg class="mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                                         </svg>
-                                        {{ $evenement->adresse }}
+                                        {{ $evenement->lieu }}
                                     </div>
                                     <div class="flex items-center">
                                         <svg class="mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
                                         </svg>
-                                        Requis : {{ $evenement->elementrequis }}
+                                        Requis : {{ $evenement->elements_requis }}
                                     </div>
                                     <div class="flex items-center">
                                         <svg class="mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                                         </svg>
-                                        {{ $evenement->nb_place }} place(s) restante(s)
+                                        {{ $evenement->placesDisponibles() }} place(s) restante(s)
                                     </div>
                                 </div>
                             </div>
                             <div class="mt-auto p-6 pt-0">
                                 <div class="flex justify-between items-center">
                                     <div class="flex space-x-2">
-                                        @if(Auth::user()->role_id == 3 || Auth::user()->role_id == 4 || $evenement->isCreator)
-                                            <a href="{{ route('evenements.edit', $evenement->id) }}"
+                                        @if($evenement->organisateurs->contains(Auth::user()))
+                                            <a href="{{ route('evenements.edit', $evenement) }}"
                                                 class="text-yellow-600 hover:text-yellow-800 transition duration-300 ease-in-out">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                                     fill="currentColor">
@@ -101,30 +101,25 @@
                                             </button>
                                         @endif
                                     </div>
-                                    @if($evenement->date < now())
-                                        <span class="bg-gray-500 text-white font-bold py-2 px-4 rounded opacity-75">
-                                            Clôturé
-                                        </span>
-                                    @else
-                                        @if(!$evenement->isCreator)
-                                            @if($evenement->isUserInscrit)
-                                                <button onclick="confirmDesinscription({{ $evenement->id }})"
-                                                    class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                                                    Se désinscrire
-                                                </button>
-                                            @else
-                                                <button onclick="confirmInscription({{ $evenement->id }})"
-                                                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-                                                    {{ $evenement->nb_place <= 0 ? 'disabled' : '' }}>
-                                                    {{ $evenement->nb_place <= 0 ? 'Complet' : 'S\'inscrire' }}
-                                                </button>
-                                            @endif
+                                    @if(Auth::user()->role->nom !== 'Gestionnaire')
+                                        @if($evenement->participants->contains(Auth::user()))
+                                            <button onclick="confirmDesinscription({{ $evenement->id }})"
+                                                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                                                Se désinscrire
+                                            </button>
                                         @else
-                                            <a href="{{ route('evenements.inscrits', $evenement) }}"
-                                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                                                Voir les inscrits
-                                            </a>
+                                            <button onclick="confirmInscription({{ $evenement->id }})"
+                                                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                                                {{ $evenement->placesDisponibles() <= 0 ? 'disabled' : '' }}>
+                                                {{ $evenement->placesDisponibles() <= 0 ? 'Complet' : 'S\'inscrire' }}
+                                            </button>
                                         @endif
+                                    @endif
+                                    @if($evenement->organisateurs->contains(Auth::user()))
+                                        <a href="{{ route('evenements.gerer-inscriptions', $evenement) }}"
+                                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                                            Gérer les inscriptions
+                                        </a>
                                     @endif
                                 </div>
                             </div>
@@ -140,6 +135,16 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const createEventButton = document.querySelector('a[href="{{ route('evenements.create') }}"]');
+            if (createEventButton) {
+                createEventButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = '{{ route('evenements.create') }}';
+                });
+            }
+        });
+
         function confirmDelete(evenementId) {
             Swal.fire({
                 title: 'Êtes-vous sûr ?',
@@ -203,16 +208,16 @@
         });
     </script>
     @foreach($evenements as $evenement)
-        <form id="delete-form-{{ $evenement->id }}" action="{{ route('evenement.destroy', $evenement) }}" method="POST"
+        <form id="delete-form-{{ $evenement->id }}" action="{{ route('evenements.destroy', $evenement) }}" method="POST"
             style="display: none;">
             @csrf
             @method('DELETE')
         </form>
-        <form id="inscription-form-{{ $evenement->id }}" action="{{ route('evenement.inscription', $evenement) }}"
+        <form id="inscription-form-{{ $evenement->id }}" action="{{ route('evenements.inscrire', $evenement) }}"
             method="POST" style="display: none;">
             @csrf
         </form>
-        <form id="desinscription-form-{{ $evenement->id }}" action="{{ route('evenement.desinscription', $evenement) }}"
+        <form id="desinscription-form-{{ $evenement->id }}" action="{{ route('evenements.desinscrire', $evenement) }}"
             method="POST" style="display: none;">
             @csrf
             @method('DELETE')
