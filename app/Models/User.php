@@ -64,4 +64,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+        public function isValidated()
+    {
+        return $this->validated == true;
+    }
+
+    
 }
