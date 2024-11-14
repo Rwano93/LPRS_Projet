@@ -30,7 +30,10 @@ class EvenementController extends Controller
     {
         return view('evenements.create');
     }
-
+    public function show(Evenement $evenement)
+{
+    return view('evenements.show', compact('evenement'));
+}
     public function store(Request $request)
     {
         $validatedData = $request->validate([

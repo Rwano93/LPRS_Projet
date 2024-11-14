@@ -11,6 +11,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/evenements/create', [EvenementController::class, 'create'])->name('evenement.create');
     Route::post('/evenements', [EvenementController::class, 'store'])->name('evenement.store');
     Route::get('/evenements/{evenement}/edit', [EvenementController::class, 'edit'])->name('evenement.edit');
+    Route::get('/evenements/{evenement}', [EvenementController::class, 'show'])->name('evenement.show');
     Route::put('/evenements/{evenement}', [EvenementController::class, 'update'])->name('evenement.update');
     Route::delete('/evenements/{evenement}', [EvenementController::class, 'destroy'])->name('evenement.destroy');
     Route::post('/evenements/{evenement}/inscription', [EvenementController::class, 'inscription'])->name('evenement.inscription');
