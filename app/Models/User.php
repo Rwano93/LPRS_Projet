@@ -17,6 +17,11 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'nom',
         'prenom',
@@ -25,6 +30,11 @@ class User extends Authenticatable
         'ref_role',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -32,25 +42,29 @@ class User extends Authenticatable
         'two_factor_secret',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
     protected $appends = [
         'profile_photo_url',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-
-    public function inscriptions()
-    {
-        return $this->hasMany(Inscription::class, 'ref_user');
-    }
-
+    /**
+     * Get the role that owns the user.
+     */
     public function role()
     {
-        return $this->belongsTo(Role::class, 'ref_role');
+        return $this->belongsTo(Role::class);
     }
 }

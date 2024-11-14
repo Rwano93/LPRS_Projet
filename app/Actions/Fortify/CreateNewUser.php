@@ -24,11 +24,11 @@ class CreateNewUser implements CreatesNewUsers
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
-        $defaultRole = Role::where('libelle', 'Nouveau')->first();
+        $defaultRole = Role::find(1);
 
         if (!$defaultRole) {
             throw ValidationException::withMessages([
-                'role' => ['Default role not found. Please contact the administrator.'],
+                'role' => ['Default role not found. Please check your database.'],
             ]);
         }
 
