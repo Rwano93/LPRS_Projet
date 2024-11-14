@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('libelle');
+        Schema::create('evenementavant', function (Blueprint $table) {
+            $table->unsignedBigInteger('ref_evenement')->primary();
+
+            $table->foreign('ref_evenement')->references('id')->on('evenements');
             $table->timestamps();
         });
-
     }
 
     /**

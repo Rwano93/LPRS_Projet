@@ -6,39 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('evenements', function (Blueprint $table) {
             $table->id();
             $table->string('type');
             $table->string('titre');
             $table->text('description');
-            $table->string('lieu');
-            $table->text('elements_requis')->nullable();
-            $table->integer('nombre_places');
-            $table->boolean('est_publie')->default(false);
+            $table->dateTime('date');
+            $table->string('adresse');
+            $table->text('elementrequis')->nullable();
+            $table->integer('nb_place');
             $table->timestamps();
         });
 
-        Schema::create('evenement_organisateur', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('evenement_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
-
-        Schema::create('evenement_participant', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('evenement_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
     }
 
-    public function down()
+
+    public function down(): void
     {
-        Schema::dropIfExists('evenement_participant');
-        Schema::dropIfExists('evenement_organisateur');
-        Schema::dropIfExists('evenements');
+        //
     }
 };
