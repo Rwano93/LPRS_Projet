@@ -6,38 +6,38 @@
                     <p class="font-bold">Erreur</p>
                     <p>{{ session('error') }}</p>
                 </div>
-                    @endif
-                    @if(session('status'))
-                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
-                        <p class="font-bold">Succès</p>
-                        <p>{{ session('status') }}</p>
-                    </div>
-                @endif
-                <div class="flex justify-between items-center mb-8">
-                    <h1 class="text-4xl font-bold text-gray-800">Événements</h1>
-                    @auth
-                        @if(Auth::user()->role && (Auth::user()->role->libelle == 'Professeur' || Auth::user()->role->libelle == 'Gestionnaire'))
-                            <a href="{{ route('evenement.create') }}"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                                Créer un événement
-                            </a>
-                        @endif
-                    @endauth
+            @endif
+            @if(session('status'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+                    <p class="font-bold">Succès</p>
+                    <p>{{ session('status') }}</p>
                 </div>
+            @endif
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-800">Événements</h1>
+                @auth
+                    @if(Auth::user()->ref_role == 6)
+                        <a href="{{ route('evenement.create') }}"
+                           class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
+                                 fill="currentColor">
+                                <path fill-rule="evenodd"
+                                      d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                      clip-rule="evenodd" />
+                            </svg>
+                            Créer un événement
+                        </a>
+                    @endif
+                @endauth
+            </div>
             <div class="relative mb-6">
                 <input type="text" id="searchInput" placeholder="Rechercher un événement..."
-                    class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                       class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                 <svg class="absolute left-3 top-2.5 text-gray-400 h-5 w-5" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20" fill="currentColor">
+                     viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd"
-                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                        clip-rule="evenodd" />
+                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                          clip-rule="evenodd" />
                 </svg>
             </div>
             @if($evenements->isNotEmpty())
@@ -82,57 +82,61 @@
                             <div class="mt-auto p-6 pt-0">
                                 <div class="flex justify-between items-center">
                                     <div class="flex space-x-2">
-                                        @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 4)
-                                            <a href="{{ route('evenement.edit', $evenement->id) }}"
-                                                class="text-yellow-600 hover:text-yellow-800 transition duration-300 ease-in-out">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                                    fill="currentColor">
-                                                    <path
-                                                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                                </svg>
-                                            </a>
-                                            <button type="button"
-                                                class="text-red-600 hover:text-red-800 transition duration-300 ease-in-out"
-                                                onclick="confirmDelete({{ $evenement->id }})">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                                    fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        @endif
+                                        @auth
+                                            @if(Auth::user()->ref_role == 6)
+                                                <a href="{{ route('evenement.edit', $evenement->id) }}"
+                                                   class="text-yellow-600 hover:text-yellow-800 transition duration-300 ease-in-out">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                                         fill="currentColor">
+                                                        <path
+                                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                                    </svg>
+                                                </a>
+                                                <button type="button"
+                                                        class="text-red-600 hover:text-red-800 transition duration-300 ease-in-out"
+                                                        onclick="confirmDelete({{ $evenement->id }})">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                                         fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                              clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                        @endauth
                                     </div>
                                     @if($evenement->date < now())
                                         <span class="bg-gray-500 text-white font-bold py-2 px-4 rounded opacity-75">
                                             Clôturé
                                         </span>
                                     @else
-                                        @if(!$evenement->isCreator)
-                                            @if($evenement->isUserInscrit(Auth::id()))
-                                                <button onclick="confirmDesinscription({{ $evenement->id }})"
-                                                    class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                                                    Se désinscrire
-                                                </button>
+                                        @auth
+                                            @if(!$evenement->isCreator)
+                                                @if($evenement->isUserInscrit(Auth::id()))
+                                                    <button onclick="confirmDesinscription({{ $evenement->id }})"
+                                                            class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                                                        Se désinscrire
+                                                    </button>
+                                                @else
+                                                    <button onclick="confirmInscription({{ $evenement->id }})"
+                                                            class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                                                            {{ $evenement->nb_place <= 0 ? 'disabled' : '' }}>
+                                                        {{ $evenement->nb_place <= 0 ? 'Complet' : 'S\'inscrire' }}
+                                                    </button>
+                                                @endif
                                             @else
-                                                <button onclick="confirmInscription({{ $evenement->id }})"
-                                                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-                                                    {{ $evenement->nb_place <= 0 ? 'disabled' : '' }}>
-                                                    {{ $evenement->nb_place <= 0 ? 'Complet' : 'S\'inscrire' }}
-                                                </button>
+                                                <a href="{{ route('evenement.inscrits', $evenement) }}"
+                                                   class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                                                    Voir les inscrits
+                                                </a>
                                             @endif
-                                        @else
-                                            <a href="{{ route('evenement.inscrits', $evenement) }}"
-                                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                                                Voir les inscrits
-                                            </a>
-                                        @endif
+                                        @endauth
                                     @endif
                                 </div>
                             </div>
                         </div>
                     @endforeach
-                    </div>
+                </div>
             @else
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 text-center">
                     <h2 class="text-xl font-semibold text-gray-800">Aucun événement trouvé</h2>
@@ -206,16 +210,16 @@
     </script>
     @foreach($evenements as $evenement)
         <form id="delete-form-{{ $evenement->id }}" action="{{ route('evenement.destroy', $evenement) }}" method="POST"
-            style="display: none;">
+              style="display: none;">
             @csrf
             @method('DELETE')
         </form>
         <form id="inscription-form-{{ $evenement->id }}" action="{{ route('evenement.inscription', $evenement) }}"
-            method="POST" style="display: none;">
+              method="POST" style="display: none;">
             @csrf
         </form>
         <form id="desinscription-form-{{ $evenement->id }}" action="{{ route('evenement.desinscription', $evenement) }}"
-            method="POST" style="display: none;">
+              method="POST" style="display: none;">
             @csrf
             @method('DELETE')
         </form>
