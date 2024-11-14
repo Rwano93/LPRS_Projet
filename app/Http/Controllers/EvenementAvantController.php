@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EvenementPasser;
+use App\Models\EvenementAvant;
 use Illuminate\Http\Request;
-
-class EvenementPasserController extends Controller
+class EvenementAvantController extends Controller
 {
     public function index()
     {
-        $evenementAvants = EvenementPasser::with([
+        $evenementAvants = EvenementAvant::with([
             'evenement' => function ($query) {
                 $query->where('date', '>=', now());
             }

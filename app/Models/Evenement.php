@@ -13,35 +13,43 @@ class Evenement extends Model
         'type',
         'titre',
         'description',
-        'lieu',
-        'elements_requis',
-        'nombre_places',
-        'est_publie'
+        'adresse',
+        'elementrequis',
+        'nb_place',
+        'date',
     ];
 
     protected $casts = [
-        'est_publie' => 'boolean',
+        'date' => 'datetime',
     ];
 
-    public function organisateurs()
+    public function inscriptions()
     {
-        return $this->belongsToMany(User::class, 'evenement_organisateur');
+        return $this->hasMany(Inscription::class, 'ref_evenement');
     }
 
-    public function participants()
+    public function isUserInscrit($userId)
     {
-        return $this->belongsToMany(User::class, 'evenement_participant');
+        return $this->inscriptions()->where('ref_user', $userId)->exists();
     }
 
-    public function aOrganisateurProfesseur()
+    public function organisations()
     {
-        return $this->organisateurs()->whereHas('role', function ($query) {
-            $query->where('nom', 'Professeur');
-        })->exists();
+        return $this->hasMany(Organisation::class, 'ref_evenement');
     }
 
-    public function placesDisponibles()
+    public function isUserCreator($userId)
     {
-        return $this->nombre_places - $this->participants()->count();
+        return $this->organisations()->where('ref_user', $userId)->exists();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'ref_user');
+    }
+
+    public function evenementAvants()
+    {
+        return $this->hasMany(EvenementAvant::class, 'ref_evenement');
     }
 }

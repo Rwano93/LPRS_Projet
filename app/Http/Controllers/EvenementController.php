@@ -2,146 +2,164 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Evenement;
-use App\Models\User;
+use App\Models\Organisation;
 use Illuminate\Http\Request;
+use App\Models\Evenement;
+use App\Models\Inscription;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Routing\Controller;
-
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\EvenementAvant;
 
 class EvenementController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function index()
     {
-        $evenements = Evenement::where('est_publie', true)->get();
+        $userId = Auth::id();
+        $evenements = Evenement::where('date', '>', Carbon::now()->subDay())->get();
+
+        foreach ($evenements as $evenement) {
+            $evenement->isCreator = $evenement->isUserCreator($userId);
+        }
+
         return view('evenements.index', compact('evenements'));
     }
 
     public function create()
     {
-        if (Auth::user()->role->nom === 'Gestionnaire') {
-            return redirect()->route('evenements.index')->with('error', 'Les gestionnaires ne peuvent pas créer d\'événements.');
-        }
         return view('evenements.create');
     }
 
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'type' => 'required|string|max:255',
             'titre' => 'required|string|max:255',
-            'description' => 'required|string',
-            'lieu' => 'required|string|max:255',
-            'elements_requis' => 'nullable|string',
-            'nombre_places' => 'required|integer|min:1',
-            'organisateurs' => 'required|array',
-            'organisateurs.*' => 'exists:users,id'
+            'description' => 'nullable|string',
+            'date' => 'required|date|after:now',
+            'adresse' => 'required|string|max:255',
+            'type' => 'required|string|max:100',
+            'elementrequis' => 'nullable|string',
+            'nb_place' => 'required|integer|min:1',
         ]);
 
         $evenement = Evenement::create($validatedData);
-        $evenement->organisateurs()->attach($validatedData['organisateurs']);
 
-        if ($evenement->aOrganisateurProfesseur()) {
-            $evenement->update(['est_publie' => true]);
-        }
+        Organisation::create([
+            'ref_user' => Auth::id(),
+            'ref_evenement' => $evenement->id,
+        ]);
 
-        return redirect()->route('evenements.show', $evenement)->with('success', 'Événement créé avec succès.');
-    }
-
-    public function show(Evenement $evenement)
-    {
-        return view('evenements.show', compact('evenement'));
+        return redirect()->route('evenement.index')->with('status', 'Événement créé avec succès !');
     }
 
     public function edit(Evenement $evenement)
     {
-        if (!$evenement->organisateurs->contains(Auth::id())) {
-            return redirect()->route('evenements.index')->with('error', 'Vous n\'êtes pas autorisé à modifier cet événement.');
-        }
         return view('evenements.edit', compact('evenement'));
     }
 
     public function update(Request $request, Evenement $evenement)
     {
-        if (!$evenement->organisateurs->contains(Auth::id())) {
-            return redirect()->route('evenements.index')->with('error', 'Vous n\'êtes pas autorisé à modifier cet événement.');
-        }
-
         $validatedData = $request->validate([
             'type' => 'required|string|max:255',
             'titre' => 'required|string|max:255',
+            'date' => 'required|date|after:now',
             'description' => 'required|string',
-            'lieu' => 'required|string|max:255',
-            'elements_requis' => 'nullable|string',
-            'nombre_places' => 'required|integer|min:1',
-            'organisateurs' => 'required|array',
-            'organisateurs.*' => 'exists:users,id'
+            'adresse' => 'required|string|max:255',
+            'elementrequis' => 'required|string|max:255',
+            'nb_place' => 'required|integer|min:0',
         ]);
 
         $evenement->update($validatedData);
-        $evenement->organisateurs()->sync($validatedData['organisateurs']);
 
-        if ($evenement->aOrganisateurProfesseur()) {
-            $evenement->update(['est_publie' => true]);
-        } else {
-            $evenement->update(['est_publie' => false]);
-        }
-
-        return redirect()->route('evenements.show', $evenement)->with('success', 'Événement mis à jour avec succès.');
+        return redirect()->route('evenement.index')->with('status', 'Événement mis à jour avec succès!');
     }
 
     public function destroy(Evenement $evenement)
     {
-        if (!$evenement->organisateurs->contains(Auth::id())) {
-            return redirect()->route('evenements.index')->with('error', 'Vous n\'êtes pas autorisé à supprimer cet événement.');
-        }
+        try {
+            DB::beginTransaction();
 
-        $evenement->delete();
-        return redirect()->route('evenements.index')->with('success', 'Événement supprimé avec succès.');
+            Inscription::where('ref_evenement', $evenement->id)->delete();
+            Organisation::where('ref_evenement', $evenement->id)->delete();
+            EvenementAvant::where('ref_evenement', $evenement->id)->delete();
+            $evenement->delete();
+
+            DB::commit();
+
+            return redirect()->route('evenement.index')->with('status', 'Événement et données associées supprimés avec succès !');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('evenement.index')->with('error', 'Erreur lors de la suppression de l\'événement : ' . $e->getMessage());
+        }
     }
 
-    public function inscrire(Evenement $evenement)
+    public function inscription(Evenement $evenement)
     {
-        if (Auth::user()->role->nom === 'Gestionnaire') {
-            return redirect()->route('evenements.show', $evenement)->with('error', 'Les gestionnaires ne peuvent pas s\'inscrire aux événements.');
-        }
+        return DB::transaction(function () use ($evenement) {
+            if ($evenement->isUserInscrit(Auth::id())) {
+                return redirect()->route('evenement.index')->with('error', 'Vous êtes déjà inscrit à cet événement.');
+            }
 
-        if ($evenement->placesDisponibles() <= 0) {
-            return redirect()->route('evenements.show', $evenement)->with('error', 'Il n\'y a plus de places disponibles pour cet événement.');
-        }
+            if ($evenement->nb_place <= 0) {
+                return redirect()->route('evenement.index')->with('error', 'Désolé, il n\'y a plus de places disponibles pour cet événement.');
+            }
 
-        $evenement->participants()->attach(Auth::id());
-        return redirect()->route('evenements.show', $evenement)->with('success', 'Vous êtes inscrit à l\'événement.');
+            if ($evenement->date < Carbon::now()) {
+                return redirect()->route('evenement.index')->with('error', 'Désolé, cet événement est déjà passé.');
+            }
+
+            Inscription::create([
+                'ref_evenement' => $evenement->id,
+                'ref_user' => Auth::id(),
+            ]);
+
+            $evenement->decrement('nb_place');
+
+            return redirect()->route('evenement.index')->with('status', 'Vous êtes bien inscrit. Merci !');
+        });
     }
 
-    public function desinscrire(Evenement $evenement)
+    public function desinscription(Evenement $evenement)
     {
-        $evenement->participants()->detach(Auth::id());
-        return redirect()->route('evenements.show', $evenement)->with('success', 'Vous êtes désinscrit de l\'événement.');
+        return DB::transaction(function () use ($evenement) {
+            $deleted = Inscription::where('ref_evenement', $evenement->id)
+                ->where('ref_user', Auth::id())
+                ->delete();
+
+            if ($deleted) {
+                $evenement->increment('nb_place');
+                return redirect()->route('evenement.index')->with('status', 'Vous êtes bien désinscrit. Merci !');
+            }
+
+            return redirect()->route('evenement.index')->with('error', 'Vous n\'étiez pas inscrit à cet événement.');
+        });
     }
 
-    public function gererInscriptions(Evenement $evenement)
+    public function inscrits(Evenement $evenement)
     {
-        if (!$evenement->organisateurs->contains(Auth::id())) {
-            return redirect()->route('evenements.index')->with('error', 'Vous n\'êtes pas autorisé à gérer les inscriptions de cet événement.');
-        }
-
-        $participants = $evenement->participants;
-        return view('evenements.gerer-inscriptions', compact('evenement', 'participants'));
+        $inscriptions = $evenement->inscriptions()->with('user')->get();
+        return view('evenements.inscrits', compact('evenement', 'inscriptions'));
     }
 
-    public function refuserInscription(Evenement $evenement, User $user)
+    public function removeUserFromEvent(Evenement $evenement, User $user)
     {
-        if (!$evenement->organisateurs->contains(Auth::id())) {
-            return redirect()->route('evenements.index')->with('error', 'Vous n\'êtes pas autorisé à gérer les inscriptions de cet événement.');
+        if (!$evenement->isUserCreator(Auth::id())) {
+            return redirect()->route('evenement.inscrits', $evenement)
+                ->with('error', 'Vous n\'avez pas la permission de supprimer des inscriptions pour cet événement.');
         }
 
-        $evenement->participants()->detach($user->id);
-        return redirect()->route('evenements.gerer-inscriptions', $evenement)->with('success', 'L\'inscription a été refusée.');
+        $deleted = Inscription::where('ref_evenement', $evenement->id)
+            ->where('ref_user', $user->id)
+            ->delete();
+
+        if ($deleted) {
+            $evenement->increment('nb_place');
+            return redirect()->route('evenement.inscrits', $evenement)
+                ->with('status', "{$user->nom} a bien été supprimé de l'événement \"{$evenement->titre}\".");
+        } else {
+            return redirect()->route('evenement.inscrits', $evenement)
+                ->with('error', 'Cet utilisateur n\'est pas inscrit à cet événement.');
+        }
     }
 }

@@ -2,23 +2,30 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EvenementController;
+use App\Http\Controllers\EvenementAvantController;
 
-// Evenement
 
-Route::resource('evenements', EvenementController::class);
-Route::post('/evenements/{evenement}/inscrire', [EvenementController::class, 'inscrire'])->name('evenements.inscrire');
-Route::delete('/evenements/{evenement}/desinscrire', [EvenementController::class, 'desinscrire'])->name('evenements.desinscrire');
-Route::get('/evenements/{evenement}/gerer-inscriptions', [EvenementController::class, 'gererInscriptions'])->name('evenements.gerer-inscriptions');
-Route::delete('/evenements/{evenement}/refuser-inscription/{user}', [EvenementController::class, 'refuserInscription'])->name('evenements.refuser-inscription');
-// ...
-Route::get('/', function () {
-    return view('welcome');
+//Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement... 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/evenements', [EvenementController::class, 'index'])->name('evenement.index');
+    Route::get('/evenements/create', [EvenementController::class, 'create'])->name('evenement.create');
+    Route::post('/evenements', [EvenementController::class, 'store'])->name('evenement.store');
+    Route::get('/evenements/{evenement}/edit', [EvenementController::class, 'edit'])->name('evenement.edit');
+    Route::put('/evenements/{evenement}', [EvenementController::class, 'update'])->name('evenement.update');
+    Route::delete('/evenements/{evenement}', [EvenementController::class, 'destroy'])->name('evenement.destroy');
+    Route::post('/evenements/{evenement}/inscription', [EvenementController::class, 'inscription'])->name('evenement.inscription');
+    Route::delete('/evenements/{evenement}/desinscription', [EvenementController::class, 'desinscription'])->name('evenement.desinscription');
+    Route::get('/evenements/{evenement}/inscrits', [EvenementController::class, 'inscrits'])->name('evenement.inscrits');
+    Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])->name('evenement.removeUserFromEvent');
 });
+Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])
+    ->name('evenement.removeUserFromEvent');
 
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [EvenementAvantController::class, 'index'])->name('home');
+Route::get('/dashboard', [EvenementAvantController::class, 'index'])->name('dashboard');
+
+
 
 Route::middleware([
     'auth:sanctum',
