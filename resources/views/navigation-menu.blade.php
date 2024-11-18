@@ -26,6 +26,9 @@
                                 <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
                                     {{ __('Événements') }}
                                 </x-nav-link>
+                                <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
+                                {{ __('Contact Us') }}
+                                </x-nav-link>
                             </div>
                         @endauth
                     </nav>
@@ -165,6 +168,9 @@
                 @endif
                 <x-responsive-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
                     {{ __('Événements') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
+                    {{ __('Contact Us') }}
                 </x-responsive-nav-link>
             
                 <div class="pt-4 pb-1 border-t border-gray-200">

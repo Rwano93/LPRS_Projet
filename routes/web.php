@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\EvenementAvantController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ContactController;
 
 
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement... 
@@ -26,8 +28,13 @@ Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::clas
 Route::get('/', [EvenementAvantController::class, 'index'])->name('home');
 Route::get('/dashboard', [EvenementAvantController::class, 'index'])->name('dashboard');
 
-
-
+//Route pour Users Controle
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::resource('users', UserController::class);
+});
+Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+    Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+    Route::get('/contact/confirmation', [ContactController::class, 'confirmation'])->name('contact.confirmation');
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
