@@ -248,7 +248,7 @@
                     </x-responsive-nav-link>
                 @endif
             @endauth
-                </div>
+              f  </div>
         </div>
     </div>
 </nav>
