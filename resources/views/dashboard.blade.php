@@ -15,23 +15,26 @@
     </style>
 
     <!-- Hero Section -->
-    <header class="bg-gradient-to-r from-gray-800 to-gray-900 text-white relative overflow-hidden">
-        <div class="absolute inset-0 bg-pattern opacity-10"></div>
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-            <div class="text-center">
-                <h1 class="text-4xl md:text-6xl font-extrabold mb-4 animate-fade-in-up">
-                    Bienvenue au Lycée Robert Schuman
-                </h1>
-                <p class="text-xl md:text-2xl mb-8 animate-fade-in-up animation-delay-300">
-                    Découvrez l'excellence éducative à Dugny
-                </p>
-                <a href="#about" class="inline-block bg-white text-gray-800 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:bg-gray-200 hover:scale-105 animate-fade-in-up animation-delay-600">
-                    Découvrir notre lycée
-                </a>
+    <section class="bg-gray-900 text-white">
+            <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 lg:py-32">
+                <div class="text-center">
+                    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+                        Bienvenue sur Notre Plateforme
+                    </h1>
+                    <p class="mt-6 max-w-3xl mx-auto text-xl text-gray-300">
+                        Découvrez nos offres exceptionnelles, nos événements passionnants et restez informé de nos
+                        dernières actualités.
+                    </p>
+                    <div class="mt-10">
+                        <a href="{{ route('register') }}"
+                            class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10">
+                            Commencer
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </header>
-
+        </section>
+    
     <main class="bg-gray-50">
         <!-- About Section -->
         <section id="about" class="py-16 md:py-24">
