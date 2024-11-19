@@ -48,6 +48,9 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Email
                                         </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Rôle
+                                        </th>
                                         @if($evenement->isUserCreator(auth()->id()))
                                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Action
@@ -63,6 +66,30 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {{ $inscription->user->email }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                @switch($inscription->user->ref_role)
+                                                    @case(1)
+                                                        Nouveau
+                                                        @break
+                                                    @case(2)
+                                                        Etudiant
+                                                        @break
+                                                    @case(3)
+                                                        Alumni
+                                                        @break
+                                                    @case(4)
+                                                        Professeur
+                                                        @break
+                                                    @case(5)
+                                                        Entreprise
+                                                        @break
+                                                    @case(6)
+                                                        Gestionnaire
+                                                        @break
+                                                    @default
+                                                        Rôle inconnu
+                                                @endswitch
                                             </td>
                                             @if($evenement->isUserCreator(auth()->id()))
                                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
