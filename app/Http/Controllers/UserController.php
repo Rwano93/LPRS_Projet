@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -11,44 +12,50 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query();
+        
+        $query = User::with('role');
 
         if ($request->has('search')) {
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'like', "%{$searchTerm}%")
+                $q->where('nom', 'like', "%{$searchTerm}%")
+                  ->orWhere('prenom', 'like', "%{$searchTerm}%")
                   ->orWhere('email', 'like', "%{$searchTerm}%");
             });
         }
 
         if ($request->has('role')) {
-            $query->where('role', $request->role);
+            $query->where('ref_role', $request->role);
         }
 
         $users = $query->paginate(10);
+        $roles = Role::all();
 
-        return view('users.index', compact('users'));
+        return view('users.index', compact('users', 'roles'));
     }
 
     public function create()
     {
-        return view('users.create');
+        $roles = Role::all();
+        return view('users.create', compact('roles'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'string', Rule::in(['admin', 'user', 'manager'])],
+            'ref_role' => ['required', 'integer', 'exists:roles,id'],
         ]);
 
         $user = User::create([
-            'name' => $validated['name'],
+            'nom' => $validated['nom'],
+            'prenom' => $validated['prenom'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
+            'ref_role' => $validated['ref_role'],
         ]);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
@@ -61,15 +68,17 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('users.edit', compact('user'));
+        $roles = Role::all();
+        return view('users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role' => ['required', 'string', Rule::in(['admin', 'user', 'manager'])],
+            'ref_role' => ['required', 'integer', 'exists:roles,id'],
         ]);
 
         $user->update($validated);

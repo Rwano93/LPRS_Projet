@@ -119,6 +119,11 @@
                                         {{ __('API Tokens') }}
                                     </x-dropdown-link>
                                 @endif
+                                @if(Auth::user()->ref_role == 6)
+                                <x-dropdown-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
+                                    {{ __('Panel Utilisateurs') }}
+                                </x-dropdown-link>
+                                @endif
  
                                 <div class="border-t border-gray-200"></div>
  

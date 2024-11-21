@@ -40,9 +40,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 });
 //Contact
 Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
-    Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
-    Route::get('/contact/confirmation', [ContactController::class, 'confirmation'])->name('contact.confirmation');
-
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+Route::get('/contact/confirmation', [ContactController::class, 'confirmation'])->name('contact.confirmation');
 
 Route::middleware([
     'auth:sanctum',

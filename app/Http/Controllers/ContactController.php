@@ -7,15 +7,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ContactFormMail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ContactController extends Controller
 {
-    public function show()
+    /**
+     * Show the contact form.
+     *
+     * @return View
+     */
+    public function show(): View
     {
         return view('contact.formulaire');
     }
 
-    public function submit(Request $request)
+    /**
+     * Handle the contact form submission.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function submit(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
@@ -27,16 +40,25 @@ class ContactController extends Controller
         $contact = Contact::create($validated);
 
         try {
-            Mail::to('admin@example.com')->send(new ContactFormMail($contact));
+            Mail::to(config('mail.admin_address'))->send(new ContactFormMail($contact));
             Log::info('E-mail envoyé avec succès', ['contact_id' => $contact->id]);
         } catch (\Exception $e) {
-            Log::error('Erreur lors de l\'envoi de l\'e-mail', ['error' => $e->getMessage(), 'contact_id' => $contact->id]);
+            Log::error('Erreur lors de l\'envoi de l\'e-mail', [
+                'erreur' => $e->getMessage(),
+                'contact_id' => $contact->id
+            ]);
+            return redirect()->route('contact.show')->with('error', 'Une erreur est survenue lors de l\'envoi de votre message. Veuillez réessayer plus tard.');
         }
 
         return redirect()->route('contact.confirmation')->with('status', 'Votre message a été envoyé avec succès !');
     }
 
-    public function confirmation()
+    /**
+     * Show the confirmation page after sending the message.
+     *
+     * @return View
+     */
+    public function confirmation(): View
     {
         return view('contact.confirmation');
     }

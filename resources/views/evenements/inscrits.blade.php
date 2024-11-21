@@ -32,6 +32,19 @@
                         </div>
                     @endif
 
+                    <!-- Search Bar -->
+                    <div class="mb-6">
+                        <label for="search" class="sr-only">Rechercher</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <input id="search" name="search" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Rechercher par nom, email, rôle ou action" type="search">
+                        </div>
+                    </div>
+
                     @if($inscriptions->isEmpty())
                         <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6 rounded-md transition-all duration-500 ease-in-out" role="alert">
                             <p class="font-bold">Information</p>
@@ -70,25 +83,39 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 @switch($inscription->user->ref_role)
                                                     @case(1)
-                                                        Nouveau
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-300">
+                                                            Nouveau
+                                                        </span>
                                                         @break
                                                     @case(2)
-                                                        Etudiant
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-300">
+                                                            Etudiant
+                                                        </span>
                                                         @break
                                                     @case(3)
-                                                        Alumni
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-300">
+                                                            Alumni
+                                                        </span>
                                                         @break
                                                     @case(4)
-                                                        Professeur
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800 border border-purple-300">
+                                                            Professeur
+                                                        </span>
                                                         @break
                                                     @case(5)
-                                                        Entreprise
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 border border-red-300">
+                                                            Entreprise
+                                                        </span>
                                                         @break
                                                     @case(6)
-                                                        Gestionnaire
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800 border border-indigo-300">
+                                                            Gestionnaire
+                                                        </span>
                                                         @break
                                                     @default
-                                                        Rôle inconnu
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-300">
+                                                            Rôle inconnu
+                                                        </span>
                                                 @endswitch
                                             </td>
                                             @if($evenement->isUserCreator(auth()->id()))
@@ -123,4 +150,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search');
+            const rows = document.querySelectorAll('tbody tr');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+
+                rows.forEach(row => {
+                    const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                    const email = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    const role = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                    const action = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
+
+                    if (name.includes(searchTerm) || email.includes(searchTerm) || role.includes(searchTerm) || action.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </x-app-layout>
