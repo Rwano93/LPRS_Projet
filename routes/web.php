@@ -6,7 +6,7 @@ use App\Http\Controllers\EvenementAvantController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ActualiteController;
-
+use App\Http\Controllers\JobOfferController;
 
 
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement... 
@@ -43,6 +43,14 @@ Route::get('/contact', [ContactController::class, 'show'])->name('contact.show')
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 Route::get('/contact/confirmation', [ContactController::class, 'confirmation'])->name('contact.confirmation');
 
+
+//Route pour JOB OFFER
+Route::resource('job-offers', JobOfferController::class);
+
+
+
+
+// Route Dahsboard
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -52,5 +60,9 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
+
+
+
 
 
