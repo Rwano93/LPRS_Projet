@@ -119,6 +119,17 @@
                                         {{ __('API Tokens') }}
                                     </x-dropdown-link>
                                 @endif
+
+                                @if(Auth::user()->ref_role == 6)
+                                    <x-dropdown-link href="{{ route('gestionnaire.dashboard') }}">
+                                        {{ __('Gestion des demandes') }}
+                                    </x-dropdown-link>
+                                @else
+                                    <x-dropdown-link href="{{ route('demandes.create') }}">
+                                        {{ __('Demande de changement de statut') }}
+                                    </x-dropdown-link>
+                                @endif
+
                                 @if(Auth::user()->ref_role == 6)
                                 <x-dropdown-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
                                     {{ __('Panel Utilisateurs') }}
@@ -204,6 +215,16 @@
                                 {{ __('API Tokens') }}
                             </x-responsive-nav-link>
                         @endif
+
+                        @if(Auth::user()->ref_role == 6)
+                            <x-responsive-nav-link href="{{ route('gestionnaire.dashboard') }}">
+                                {{ __('Gestion des demandes') }}
+                            </x-responsive-nav-link>
+                        @else
+                            <x-responsive-nav-link href="{{ route('demandes.create') }}">
+                                {{ __('Demande de changement de statut') }}
+                            </x-responsive-nav-link>
+                        @endif
  
                         <form method="POST" action="{{ route('logout') }}" x-data>
                             @csrf
@@ -216,8 +237,7 @@
  
                         @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                             <div class="border-t border-gray-200"></div>
- 
-                            <div class="block px-4 py-2 text-xs text-gray-400">
+ <div class="block px-4 py-2 text-xs text-gray-400">
                                 {{ __('Manage Team') }}
                             </div>
  

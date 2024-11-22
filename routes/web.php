@@ -7,6 +7,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ActualiteController;
 use App\Http\Controllers\OffreController;
+use App\Http\Controllers\DemandeChangementStatutController;
+use App\Http\Controllers\GestionnaireController;
+use App\Http\Middleware\GestionnaireMiddleware;
+
 
 
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement... 
@@ -54,8 +58,22 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
+// Routes pour les demandes de changement de statut (accessibles à tous les utilisateurs authentifiés)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/demandes/create', [DemandeChangementStatutController::class, 'create'])->name('demandes.create');
+    Route::post('/demandes', [DemandeChangementStatutController::class, 'store'])->name('demandes.store');
+});
 
+Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
+    Route::get('/gestionnaire/dashboard', [GestionnaireController::class, 'dashboard'])->name('gestionnaire.dashboard');
+    Route::get('/gestionnaire/demandes', [GestionnaireController::class, 'gererDemandes'])->name('gestionnaire.demandes.index');
+    Route::get('/gestionnaire/demandes/{demande}', [GestionnaireController::class, 'voirDemande'])->name('gestionnaire.demandes.show');
+    Route::post('/gestionnaire/demandes/{demande}/approuver', [GestionnaireController::class, 'approuverDemande'])->name('gestionnaire.demandes.approuver');
+    Route::post('/gestionnaire/demandes/{demande}/rejeter', [GestionnaireController::class, 'rejeterDemande'])->name('gestionnaire.demandes.rejeter');
 
+    // Statistiques (optionnel)
+    Route::get('/gestionnaire/statistiques', [GestionnaireController::class, 'statistiques'])->name('gestionnaire.statistiques');
+});
 
 
 // Route Dahsboard

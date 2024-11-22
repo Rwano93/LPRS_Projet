@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('etudiants', function (Blueprint $table) {
+        Schema::create('alumnis', function (Blueprint $table) {
             $table->unsignedBigInteger('ref_user')->primary();
-            $table->string('etude');
+            $table->string('promotion');
             $table->text('cv')->nullable();
             $table->timestamps();
 
@@ -20,6 +20,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('etudiants');
+        Schema::dropIfExists('alumnis');
     }
 };

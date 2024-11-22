@@ -8,10 +8,9 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('etudiants', function (Blueprint $table) {
+        Schema::create('professeurs', function (Blueprint $table) {
             $table->unsignedBigInteger('ref_user')->primary();
-            $table->string('etude');
-            $table->text('cv')->nullable();
+            $table->string('specialite');
             $table->timestamps();
 
             $table->foreign('ref_user')->references('id')->on('users')->onDelete('cascade');
@@ -20,6 +19,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('etudiants');
+        Schema::dropIfExists('professeurs');
     }
 };

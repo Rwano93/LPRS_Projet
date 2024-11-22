@@ -67,4 +67,34 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'ref_role');
     }
+    public function demandesChangementStatut()
+    {
+        return $this->hasMany(DemandeChangementStatut::class);
+    }
+
+    public function hasRole($role)
+    {
+        return $this->roles()->where('libelle', $role)->exists();
+    }
+    public function etudiant()
+    {
+        return $this->hasOne(Etudiant::class, 'ref_user');
+    }
+
+    public function alumni()
+    {
+        return $this->hasOne(Alumni::class, 'ref_user');
+    }
+
+    public function professeur()
+    {
+        return $this->hasOne(Professeur::class, 'ref_user');
+    }
+
+    public function entreprises()
+    {
+        return $this->belongsToMany(Entreprise::class, 'entreprise_user')
+            ->withPivot('poste')
+            ->withTimestamps();
+    }
 }
