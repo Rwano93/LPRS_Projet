@@ -18,10 +18,10 @@
                                 <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                                     {{ __('Accueil') }}
                                 </x-nav-link>
-                                @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 4 || Auth::user()->ref_role == 2)
-                                    <x-nav-link href="{{ route('joboffers.index') }}" :active="request()->routeIs('joboffers.index')">
-                                        {{ __('Offres d\'emploi') }}
-                                    </x-nav-link>
+                                @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 4 || Auth::user()->ref_role == 2 || Auth::user()->ref_role == 6)
+                                <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
+                                    {{ __('Offres d\'emploi') }}
+                                </x-nav-link>
                                 @endif
                                 <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
                                     {{ __('Événements') }}
@@ -168,8 +168,10 @@
                 <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                     {{ __('Accueil') }}
                 </x-responsive-nav-link>
-                @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 2 || Auth::user()->ref_role == 4 )
-                    
+                @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 2 || Auth::user()->ref_role == 4 || Auth::user()->ref_role == 6)
+                <x-responsive-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
+                    {{ __('Offres d\'emploi') }}
+                </x-responsive-nav-link>
                 @endif
                 <x-responsive-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
                     {{ __('Événements') }}

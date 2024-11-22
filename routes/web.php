@@ -6,7 +6,7 @@ use App\Http\Controllers\EvenementAvantController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ActualiteController;
-use App\Http\Controllers\JobOfferController;
+use App\Http\Controllers\OffreController;
 
 
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement... 
@@ -45,12 +45,12 @@ Route::get('/contact/confirmation', [ContactController::class, 'confirmation'])-
 
 
 //Route pour JOB OFFER
-Route::resource('job-offers', JobOfferController::class);
+Route::resource('offres', OffreController::class);
 Route::middleware(['auth'])->group(function () {
-    Route::get('/job-offers', [JobOfferController::class, 'index'])->name('job-offers.index');
-    Route::post('/job-offers', [JobOfferController::class, 'store'])->name('job-offers.store');
-    Route::put('/job-offers/{jobOffer}', [JobOfferController::class, 'update'])->name('job-offers.update');
-    Route::delete('/job-offers/{jobOffer}', [JobOfferController::class, 'destroy'])->name('job-offers.destroy');
+    Route::get('/offres', [OffreController::class, 'index'])->name('offres.index');
+    Route::post('/offres', [OffreController::class, 'store'])->name('offres.store');
+    Route::put('/offres/{offre}', [OffreController::class, 'update'])->name('offres.update');
+    Route::delete('/offres/{offre}', [OffreController::class, 'destroy'])->name('offres.destroy');
 });
 
 
