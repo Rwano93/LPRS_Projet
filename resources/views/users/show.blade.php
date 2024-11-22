@@ -31,13 +31,21 @@
                                 <dl>
                                     <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt class="text-sm font-medium text-gray-500">
-                                            Full name
+                                            Nom
                                         </dt>
                                         <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                            {{ $user->name }}
+                                            {{ $user->nom }}
                                         </dd>
                                     </div>
                                     <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                        <dt class="text-sm font-medium text-gray-500">
+                                            Prénom
+                                        </dt>
+                                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                            {{ $user->prenom }}
+                                        </dd>
+                                    </div>
+                                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt class="text-sm font-medium text-gray-500">
                                             Email address
                                         </dt>
@@ -45,17 +53,34 @@
                                             {{ $user->email }}
                                         </dd>
                                     </div>
-                                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt class="text-sm font-medium text-gray-500">
                                             Role
                                         </dt>
                                         <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->role == 'admin' ? 'bg-red-100 text-red-800' : ($user->role == 'manager' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800') }}">
-                                                {{ ucfirst($user->role) }}
+                                            @php
+                                                $roleColor = 'bg-gray-100 text-gray-800';
+                                                $roleName = 'No Role Assigned';
+                                                if ($user->role) {
+                                                    $roleName = ucfirst($user->role->libelle);
+                                                    switch($user->ref_role) {
+                                                        case 6:
+                                                            $roleColor = 'bg-red-100 text-red-800';
+                                                            break;
+                                                        case 5:
+                                                            $roleColor = 'bg-yellow-100 text-yellow-800';
+                                                            break;
+                                                        default:
+                                                            $roleColor = 'bg-green-100 text-green-800';
+                                                    }
+                                                }
+                                            @endphp
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $roleColor }}">
+                                                {{ $roleName }}
                                             </span>
                                         </dd>
                                     </div>
-                                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt class="text-sm font-medium text-gray-500">
                                             Created at
                                         </dt>
@@ -63,7 +88,7 @@
                                             {{ $user->created_at->format('F j, Y, g:i a') }}
                                         </dd>
                                     </div>
-                                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt class="text-sm font-medium text-gray-500">
                                             Last updated
                                         </dt>

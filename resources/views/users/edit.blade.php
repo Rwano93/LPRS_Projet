@@ -14,8 +14,13 @@
                         @method('PUT')
 
                         <div class="mb-4">
-                            <x-label for="name" value="{{ __('Name') }}" />
-                            <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name', $user->name)" required autofocus />
+                            <x-label for="nom" value="{{ __('Nom') }}" />
+                            <x-input id="nom" class="block mt-1 w-full" type="text" name="nom" :value="old('nom', $user->nom)" required autofocus />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-label for="prenom" value="{{ __('Prénom') }}" />
+                            <x-input id="prenom" class="block mt-1 w-full" type="text" name="prenom" :value="old('prenom', $user->prenom)" required />
                         </div>
 
                         <div class="mb-4">
@@ -38,11 +43,13 @@
                         </div>
 
                         <div class="mb-4">
-                            <x-label for="role" value="{{ __('Role') }}" />
-                            <select id="role" name="role" class="block mt-1 w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
-                                <option value="manager" {{ $user->role == 'manager' ? 'selected' : '' }}>Manager</option>
-                                <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                            <x-label for="ref_role" value="{{ __('Role') }}" />
+                            <select id="ref_role" name="ref_role" class="block mt-1 w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                @foreach($roles as $role)
+                                    <option value="{{ $role->id }}" {{ $user->ref_role == $role->id ? 'selected' : '' }}>
+                                        {{ ucfirst($role->libelle) }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 
