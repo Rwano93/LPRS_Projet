@@ -14,6 +14,9 @@
                             User Information
                         </div>
                         <div>
+                        <x-button-link href="{{ route('users.index') }}" class="bg-gray-500 hover:bg-gray-700">
+                            Back to Users
+                        </x-button-link>
                             <x-button-link href="{{ route('users.edit', $user) }}" class="bg-blue-500 hover:bg-blue-700">
                                 Edit User
                             </x-button-link>
