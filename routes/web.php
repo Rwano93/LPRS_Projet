@@ -6,7 +6,7 @@ use App\Http\Controllers\EvenementAvantController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ActualiteController;
-
+use App\Http\Controllers\JobOfferController;
 
 
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement... 
@@ -43,6 +43,22 @@ Route::get('/contact', [ContactController::class, 'show'])->name('contact.show')
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 Route::get('/contact/confirmation', [ContactController::class, 'confirmation'])->name('contact.confirmation');
 
+
+//Route pour JOB OFFER
+Route::resource('job-offers', JobOfferController::class);
+Route::middleware(['auth'])->group(function () {
+    Route::get('/job-offers', [JobOfferController::class, 'index'])->name('job-offers.index');
+    Route::post('/job-offers', [JobOfferController::class, 'store'])->name('job-offers.store');
+    Route::put('/job-offers/{jobOffer}', [JobOfferController::class, 'update'])->name('job-offers.update');
+    Route::delete('/job-offers/{jobOffer}', [JobOfferController::class, 'destroy'])->name('job-offers.destroy');
+});
+
+
+
+
+
+
+// Route Dahsboard
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -52,5 +68,9 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
+
+
+
 
 
