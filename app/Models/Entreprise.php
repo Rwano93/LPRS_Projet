@@ -10,6 +10,15 @@ class Entreprise extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nom', 'adresseweb', 'numero'
+        'nom',
+        'adresse',
+        'code_postal',
+        'ville',
+        'telephone',
     ];
+
+    public function offres()
+    {
+        return $this->hasMany(Offre::class);
+    }
 }

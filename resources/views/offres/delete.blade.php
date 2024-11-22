@@ -13,18 +13,18 @@
                         Êtes-vous sûr de vouloir supprimer cette offre d'emploi ?
                     </h3>
                     <div class="mb-4">
-                        <p class="text-gray-600"><strong>Titre :</strong> {{ $jobOffer->title }}</p>
-                        <p class="text-gray-600"><strong>Type :</strong> {{ $jobOffer->type }}</p>
+                        <p class="text-gray-600"><strong>Titre :</strong> {{ $offre->titre }}</p>
+                        <p class="text-gray-600"><strong>Type :</strong> {{ $offre->type }}</p>
                     </div>
                     <div class="flex items-center justify-start space-x-4">
-                        <form action="{{ route('job-offers.destroy', $jobOffer) }}" method="POST">
+                        <form action="{{ route('offres.destroy', $offre) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                 Confirmer la suppression
                             </button>
                         </form>
-                        <a href="{{ route('job-offers.show', $jobOffer) }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        <a href="{{ route('offres.show', $offre) }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             Annuler
                         </a>
                     </div>
@@ -33,4 +33,3 @@
         </div>
     </div>
 </x-app-layout>
-

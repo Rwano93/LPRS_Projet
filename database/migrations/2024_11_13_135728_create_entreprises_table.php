@@ -12,6 +12,9 @@ return new class extends Migration
             $table->id();
             $table->string('nom');
             $table->string('adresse');
+            $table->char('code_postal', 5);
+            $table->string('ville');
+            $table->string('telephone', 10);
             $table->string('site_web')->unique();
             $table->timestamps();
         });

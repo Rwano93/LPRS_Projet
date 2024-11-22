@@ -9,25 +9,24 @@ class Offre extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['titre', 'type', 'description', 'missions', 'salaire', 'est_ouverte', 'entreprise_id', 'user_id'];
+    protected $fillable = [
+        'titre',
+        'description',
+        'missions',
+        'type',
+        'salaire',
+        'entreprise_id',
+        'user_id',
+        'est_ouverte'
+    ];
 
     public function entreprise()
     {
         return $this->belongsTo(Entreprise::class);
     }
 
-    public function auteur()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function formations()
-    {
-        return $this->belongsToMany(Formation::class, 'formation_offre');
-    }
-
-    public function candidatures()
-    {
-        return $this->hasMany(Candidature::class);
+        return $this->belongsTo(User::class);
     }
 }
