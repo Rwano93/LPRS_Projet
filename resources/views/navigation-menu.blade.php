@@ -18,11 +18,9 @@
                                 <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                                     {{ __('Accueil') }}
                                 </x-nav-link>
-                                @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 4 || Auth::user()->ref_role == 2 || Auth::user()->ref_role == 6)
-                                    <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
-                                        {{ __('Offres d\'emploi') }}
-                                    </x-nav-link>
-                                @endif
+                                <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
+                                    {{ __('Offres d\'emploi') }}
+                                </x-nav-link>
                                 <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
                                     {{ __('Événements') }}
                                 </x-nav-link>
@@ -179,11 +177,9 @@
                 <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                     {{ __('Accueil') }}
                 </x-responsive-nav-link>
-                @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 2 || Auth::user()->ref_role == 4 || Auth::user()->ref_role == 6)
-                    <x-responsive-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
-                        {{ __('Offres d\'emploi') }}
-                    </x-responsive-nav-link>
-                @endif
+                <x-responsive-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
+                    {{ __('Offres d\'emploi') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
                     {{ __('Événements') }}
                 </x-responsive-nav-link>
