@@ -21,6 +21,9 @@
                                 <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
                                     {{ __('Offres d\'emploi') }}
                                 </x-nav-link>
+                                <x-nav-link href="{{ route('discussion.index') }}" :active="request()->routeIs('discussion.index')">
+                                    {{ __('Forum') }}
+                                </x-nav-link>
                                 <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
                                     {{ __('Événements') }}
                                 </x-nav-link>
@@ -179,6 +182,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
                     {{ __('Offres d\'emploi') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('discussion.index') }}" :active="request()->routeIs('discussion.index')">
+                    {{ __('Forum') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
                     {{ __('Événements') }}

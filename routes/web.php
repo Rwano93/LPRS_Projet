@@ -45,7 +45,9 @@ Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store
 Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store'])->name('replies.store');
 Route::resource('discussions', DiscussionController::class);
 Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store'])->name('replies.store');
-
+// Ajout de routes RESTful pour Discussions
+Route::resource('discussions', DiscussionController::class);
+Route::get('/discussions', [DiscussionController::class, 'index'])->name('discussion.index');
 
 Route::get('/', [EvenementAvantController::class, 'index'])->name('home');
 Route::get('/dashboard', [EvenementAvantController::class, 'index'])->name('dashboard');
