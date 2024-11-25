@@ -10,10 +10,12 @@ use App\Http\Controllers\OffreController;
 use App\Http\Controllers\DemandeChangementStatutController;
 use App\Http\Controllers\GestionnaireController;
 use App\Http\Middleware\GestionnaireMiddleware;
+use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\ReplyController;
 
 
 
-//Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement... 
+//Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement...
 Route::middleware(['auth'])->group(function () {
     Route::get('/evenements', [EvenementController::class, 'index'])->name('evenement.index');
     Route::get('/evenements/create', [EvenementController::class, 'create'])->name('evenement.create');
@@ -29,6 +31,20 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])
     ->name('evenement.removeUserFromEvent');
+
+// Forum et discussions
+Route::get('/forum', [DiscussionController::class, 'index'])->name('forum.index'); // Page principale du forum
+Route::get('/discussions/create', [DiscussionController::class, 'create'])->name('discussions.create'); // Formulaire de création
+Route::post('/discussions', [DiscussionController::class, 'store'])->name('discussions.store'); // Sauvegarde de la discussion
+Route::resource('discussions', DiscussionController::class)->except(['index', 'create', 'store']);
+Route::resource('discussions', DiscussionController::class);
+Route::resource('replies', ReplyController::class);
+Route::post('/replies', [ReplyController::class, 'store'])->name('replies.store');
+Route::get('/discussions/image/{id}', [DiscussionController::class, 'displayImage'])->name('discussions.image');
+Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store'])->name('replies.store');
+Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store'])->name('replies.store');
+Route::resource('discussions', DiscussionController::class);
+Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store'])->name('replies.store');
 
 
 Route::get('/', [EvenementAvantController::class, 'index'])->name('home');
