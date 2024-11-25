@@ -12,15 +12,20 @@ class DemandeChangementStatut extends Model
     protected $fillable = [
         'user_id',
         'role_id',
-        'type_demande',
-        'statut',
         'message',
         'cv',
+        'niveau_etude',
         'filiere',
         'formation_id',
         'annee_diplome',
-        'entreprise',
-        'poste',
+        'emploi_actuel',
+        'nom_entreprise',
+        'adresse',
+        'code_postal',
+        'ville',
+        'secteur_activite',
+        'site_web',
+        'statut',
     ];
 
     public function user()
