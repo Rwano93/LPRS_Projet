@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('professeurs', function (Blueprint $table) {
             $table->unsignedBigInteger('ref_user')->primary();
-            $table->string('specialite');
+            $table->string('specialite')->nullable();
             $table->timestamps();
 
             $table->foreign('ref_user')->references('id')->on('users')->onDelete('cascade');
@@ -22,3 +22,4 @@ return new class extends Migration
         Schema::dropIfExists('professeurs');
     }
 };
+

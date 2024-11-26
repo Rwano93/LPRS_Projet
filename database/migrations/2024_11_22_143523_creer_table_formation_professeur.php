@@ -10,10 +10,11 @@ return new class extends Migration
     {
         Schema::create('formation_professeur', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('formation_id');
             $table->unsignedBigInteger('professeur_id');
-            $table->foreignId('formation_id')->constrained()->onDelete('cascade');
             $table->timestamps();
 
+            $table->foreign('formation_id')->references('id')->on('formations')->onDelete('cascade');
             $table->foreign('professeur_id')->references('ref_user')->on('professeurs')->onDelete('cascade');
         });
     }
@@ -23,3 +24,4 @@ return new class extends Migration
         Schema::dropIfExists('formation_professeur');
     }
 };
+
