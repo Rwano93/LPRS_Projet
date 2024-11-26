@@ -4,7 +4,11 @@
 ```markdown
 # Nom du projet
 
-Projet LPRS. Création d'un site internet qui permet un gestion utilisateur ainsi qu'une communication entre utilisateur. De plus, il permet aussi a d'ancien élèves de créer des évenements ainsi que de poster des images. Des entreprises peuvent aussi y appliquer des offres de stage/alternance. 
+Projet LPRS.
+
+#Objet du projet
+Réaliser un projet pour notre école :
+Gérer l'espace client/evenements/forum/offres de stages pour les étudiants etc...
 
 ## Table des matières
 
