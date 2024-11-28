@@ -98,12 +98,16 @@
                                 @else
                                     <span class="inline-flex rounded-md">
                                     <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+<<<<<<< HEAD
                                     @if(Auth::check())
                                         {{ Auth::user()->nom }} {{ Auth::user()->prenom }}
                                     @else
                                         {{ __('Guest') }}
                                     @endif
 
+=======
+                                        {{ Auth::user()->nom . " " . Auth::user()->prenom }}
+>>>>>>> c96dd8662637baa09f1856abd835792d3ef688c9
  
                                         <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -149,6 +153,10 @@
                                     {{ __('Panel Utilisateurs') }}
                                 </x-dropdown-link>
                                 @endif
+<<<<<<< HEAD
+=======
+ 
+>>>>>>> c96dd8662637baa09f1856abd835792d3ef688c9
                                 <div class="border-t border-gray-200"></div>
  
                                 <form method="POST" action="{{ route('logout') }}" x-data>
