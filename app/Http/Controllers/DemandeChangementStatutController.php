@@ -51,19 +51,31 @@ class DemandeChangementStatutController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $this->validateDemande($request);
+        // Validation des données
+        $validated = $request->validate([
+            'annee_diplome' => 'required|integer|min:1900|max:' . date('Y'),
+            'emploi_actuel' => 'required|string|max:255',
+            'cv' => 'required|file|mimes:pdf|max:2048', // Max 2MB
+            'message' => 'required|string|max:1000',
+        ]);
 
-        $demande = new DemandeChangementStatut($validatedData);
-        $demande->user_id = Auth::id();
-        $demande->statut = 'en_attente';
-
+        // Enregistrement du fichier CV
         if ($request->hasFile('cv')) {
-            $demande->cv = $request->file('cv')->store('cv', 'public');
+            $cvPath = $request->file('cv')->store('cvs', 'public');
         }
 
-        $demande->save();
+        // Enregistrement dans la base de données
+        $demande = DemandeChangementStatut::create([
+            'user_id' => Auth::id(), // ID de l'utilisateur connecté
+            'annee_diplome' => $validated['annee_diplome'],
+            'emploi_actuel' => $validated['emploi_actuel'],
+            'cv_path' => $cvPath ?? null,
+            'message' => $validated['message'],
+            'role_id' => $request->role_id, // Optionnel, à inclure si pertinent
+        ]);
 
-        return redirect()->route('demandes.index')->with('success', 'Votre demande a été enregistrée avec succès.');
+        // Redirection avec succès
+        return redirect()->route('demandes.index')->with('success', 'Votre demande a été soumise avec succès.');
     }
 
     public function show(DemandeChangementStatut $demande)

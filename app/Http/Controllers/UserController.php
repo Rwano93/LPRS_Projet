@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
+
 {
+    
     public function index(Request $request)
 {
     $query = User::query()->with('role');
@@ -101,4 +103,5 @@ public function store(Request $request)
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
+    
 }
