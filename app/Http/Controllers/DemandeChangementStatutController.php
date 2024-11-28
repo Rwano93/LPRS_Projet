@@ -7,6 +7,7 @@ use App\Models\Formation;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class DemandeChangementStatutController extends Controller
 {
@@ -49,34 +50,102 @@ class DemandeChangementStatutController extends Controller
         return view('demandes.forms.entreprise', compact('role'));
     }
 
+    
+
     public function store(Request $request)
-    {
-        // Validation des données
-        $validated = $request->validate([
-            'annee_diplome' => 'required|integer|min:1900|max:' . date('Y'),
-            'emploi_actuel' => 'required|string|max:255',
-            'cv' => 'required|file|mimes:pdf|max:2048', // Max 2MB
-            'message' => 'required|string|max:1000',
-        ]);
+{
+    // Validation des données en fonction du rôle
+    $validated = $this->validateDemande($request);
 
-        // Enregistrement du fichier CV
-        if ($request->hasFile('cv')) {
-            $cvPath = $request->file('cv')->store('cvs', 'public');
-        }
+    Log::info('Validation réussie', ['validated_data' => $validated]);
 
-        // Enregistrement dans la base de données
-        $demande = DemandeChangementStatut::create([
-            'user_id' => Auth::id(), // ID de l'utilisateur connecté
-            'annee_diplome' => $validated['annee_diplome'],
-            'emploi_actuel' => $validated['emploi_actuel'],
-            'cv_path' => $cvPath ?? null,
-            'message' => $validated['message'],
-            'role_id' => $request->role_id, // Optionnel, à inclure si pertinent
-        ]);
-
-        // Redirection avec succès
-        return redirect()->route('demandes.index')->with('success', 'Votre demande a été soumise avec succès.');
+    // Enregistrement du fichier CV si disponible
+    $cvPath = null;
+    if ($request->hasFile('cv') && $request->file('cv')->isValid()) {
+        $cvPath = $request->file('cv')->store('cvs', 'public');
+        Log::info('Fichier CV téléchargé', ['cv_path' => $cvPath]);
+    } else {
+        Log::warning('Pas de fichier CV ou fichier invalide');
     }
+
+    try {
+        // Création de la demande avec les données validées
+        $demande = DemandeChangementStatut::create([
+            'user_id' => Auth::id(),
+            'role_id' => $request->role_id,
+            'type_demande' => $this->getTypeDemande($request),
+            'statut' => 'en_attente',
+            'message' => $validated['message'],
+            'cv' => $cvPath,
+            'filiere' => $request->filiere ?? null,
+            'formation_id' => $request->formation_id ?? null,
+            'annee_diplome' => $request->annee_diplome ?? null,
+            'entreprise' => $request->nom_entreprise ?? null,
+            'poste' => $request->poste ?? null,
+        ]);
+
+        Log::info('Demande créée', ['demande' => $demande]);
+
+        // Si tout se passe bien, rediriger avec un message de succès
+        return redirect()->route('demandes.index')->with('success', 'Votre demande a été soumise avec succès.');
+    } catch (\Exception $e) {
+        // Gestion des erreurs
+        Log::error('Erreur lors de la création de la demande', ['error' => $e->getMessage()]);
+        return back()->with('error', 'Une erreur est survenue lors de la soumission de votre demande.')->withInput();
+    }
+}
+
+    
+
+
+
+
+private function getTypeDemande(Request $request)
+{
+    // Vous pouvez obtenir le type de la demande en fonction du role_id ou d'autres critères
+    $role = Role::findOrFail($request->role_id);
+    return strtolower($role->libelle); // Retourne 'etudiant', 'professeur', 'alumni', 'entreprise'
+}
+
+private function validateDemande(Request $request)
+{
+    // Règles de validation pour chaque type de demande
+    $rules = [
+        'role_id' => 'required|exists:roles,id',
+        'message' => 'required|string',
+    ];
+
+    $role = Role::findOrFail($request->role_id);
+
+    switch ($role->libelle) {
+        case 'Etudiant':
+            $rules['niveau_etude'] = 'required|string';
+            $rules['filiere'] = 'required|string';
+            $rules['cv'] = 'required|file|mimes:pdf|max:2048';
+            break;
+        case 'Professeur':
+            $rules['formation_id'] = 'required|exists:formations,id';
+            $rules['cv'] = 'required|file|mimes:pdf|max:2048';
+            break;
+        case 'Alumni':
+            $rules['annee_diplome'] = 'required|integer|min:1900|max:' . date('Y');
+            $rules['emploi_actuel'] = 'required|string';
+            $rules['cv'] = 'required|file|mimes:pdf|max:2048';
+            break;
+        case 'Entreprise':
+            $rules['nom_entreprise'] = 'required|string';
+            $rules['adresse'] = 'required|string';
+            $rules['code_postal'] = 'required|string';
+            $rules['ville'] = 'required|string';
+            $rules['secteur_activite'] = 'required|string';
+            $rules['site_web'] = 'required|url';
+            break;
+    }
+
+    return $request->validate($rules);
+}
+
+
 
     public function show(DemandeChangementStatut $demande)
     {
@@ -103,40 +172,6 @@ class DemandeChangementStatutController extends Controller
         $demandes = DemandeChangementStatut::with(['user', 'role'])->latest()->paginate(10);
         return view('gestionnaire.dashboard', compact('demandes'));
     }
-    private function validateDemande(Request $request)
-    {
-        $rules = [
-            'role_id' => 'required|exists:roles,id',
-            'message' => 'required|string',
-        ];
+   
 
-        $role = Role::findOrFail($request->role_id);
-
-        switch ($role->libelle) {
-            case 'Etudiant':
-                $rules['niveau_etude'] = 'required|string';
-                $rules['filiere'] = 'required|string';
-                $rules['cv'] = 'required|file|mimes:pdf|max:2048';
-                break;
-            case 'Professeur':
-                $rules['formation_id'] = 'required|exists:formations,id';
-                $rules['cv'] = 'required|file|mimes:pdf|max:2048';
-                break;
-            case 'Alumni':
-                $rules['annee_diplome'] = 'required|integer|min:1900|max:' . date('Y');
-                $rules['emploi_actuel'] = 'required|string';
-                $rules['cv'] = 'required|file|mimes:pdf|max:2048';
-                break;
-            case 'Entreprise':
-                $rules['nom_entreprise'] = 'required|string';
-                $rules['adresse'] = 'required|string';
-                $rules['code_postal'] = 'required|string';
-                $rules['ville'] = 'required|string';
-                $rules['secteur_activite'] = 'required|string';
-                $rules['site_web'] = 'required|url';
-                break;
-        }
-
-        return $request->validate($rules);
-    }
 }

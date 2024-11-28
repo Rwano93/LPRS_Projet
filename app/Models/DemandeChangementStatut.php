@@ -7,27 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class DemandeChangementStatut extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'user_id',
         'role_id',
+        'type_demande',
+        'statut',
         'message',
         'cv',
-        'niveau_etude',
         'filiere',
         'formation_id',
         'annee_diplome',
-        'emploi_actuel',
-        'nom_entreprise',
-        'adresse',
-        'code_postal',
-        'ville',
-        'secteur_activite',
-        'site_web',
-        'statut',
+        'entreprise',
+        'poste',
     ];
 
+    // Vous pouvez aussi ajouter des relations comme :
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -43,3 +37,4 @@ class DemandeChangementStatut extends Model
         return $this->belongsTo(Formation::class);
     }
 }
+

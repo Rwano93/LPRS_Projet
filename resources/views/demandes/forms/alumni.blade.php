@@ -3,6 +3,17 @@
         <div class="max-w-3xl mx-auto">
             <div class="bg-white shadow-xl rounded-lg overflow-hidden">
                 <div class="p-8">
+                    <!-- Affichage des messages de succès ou d'erreur -->
+                    @if(session('success'))
+                        <div class="bg-green-500 text-white p-4 rounded-md mb-6">
+                            <p class="font-semibold">{{ session('success') }}</p>
+                        </div>
+                    @elseif(session('error'))
+                        <div class="bg-red-500 text-white p-4 rounded-md mb-6">
+                            <p class="font-semibold">{{ session('error') }}</p>
+                        </div>
+                    @endif
+
                     <h2 class="text-3xl font-semibold text-gray-800 mb-6">
                         Demande de changement de statut - Alumni
                     </h2>
@@ -50,4 +61,3 @@
         </div>
     </div>
 </x-app-layout>
-
