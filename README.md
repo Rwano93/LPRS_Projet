@@ -83,6 +83,11 @@ Gérer l'espace client/evenements/forum/offres de stages pour les étudiants etc
    php artisan jetstream:install livewire
    ```
 
+10.(Opérationnel) Si tu a besoin d'utiliser les roles pour les gestion de status, tu auras besoin de cela pour afficher et gérer les utilisateurs status. 
+ ```bash
+ composer require spatie/laravel-permission
+ ```
+
 ## Configuration
 
 - Configure les paramètres de la base de données dans le fichier `.env`.
