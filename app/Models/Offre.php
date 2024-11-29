@@ -29,4 +29,8 @@ class Offre extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function offreAvant()
+    {
+        return $this->hasOne(OffreAvant::class, 'ref_offre');
+    }
 }

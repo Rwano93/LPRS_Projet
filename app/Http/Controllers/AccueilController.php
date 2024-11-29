@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActiviteAvant;
-use App\Models\EvenementAvant;
-use App\Models\OffreAvant;
+use App\Models\Offre;
+use App\Models\Evenement;
+use App\Models\Actualite;
 
-// Contrôleur pour la page d'accueil
-class AccueilController
+class AccueilController extends Controller
 {
-    // Méthode pour afficher la page d'accueil
     public function index()
     {
-        // Récupération des données pour la page d'accueil
-        $events = EvenementAvant::all();
-        $news = ActiviteAvant::all();
-        $offers = OffreAvant::all();
+        // Exemple pour récupérer les données de tes offres, événements et actualités
+        $offers = Offre::with('offre')->latest()->take(3)->get(); // Assurez-vous que la relation 'offre' existe
+        $events = Evenement::with('evenement')->latest()->take(3)->get(); // Assurez-vous que la relation 'evenement' existe
+        $news = Actualite::latest()->take(3)->get(); // Assurez-vous qu'il n'y a pas de relation spécifique ici
 
-        // Affichage de la vue dashboard avec les données récupérées
-        return view('dashboard', compact('offers', 'news', 'events'));
+        // Passer les données à la vue
+        return view('home', compact('offers', 'events', 'news'));
     }
 }

@@ -14,6 +14,7 @@ class Actualite extends Model
         'contenu',
         'date_publication',
         'image_url',
+        'user_id',
     ];
 
     protected $casts = [
@@ -24,4 +25,5 @@ class Actualite extends Model
     {
         return $this->belongsTo(User::class);
     }
+    
 }

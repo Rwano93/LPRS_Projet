@@ -11,12 +11,10 @@ class EvenementAvant extends Model
 
     protected $table = 'evenementavant';
 
-    protected $fillable = [
-        'ref_evenement',
-    ];
-
+    // Relation avec le modèle Evenement
     public function evenement()
     {
         return $this->belongsTo(Evenement::class, 'ref_evenement');
     }
 }
+

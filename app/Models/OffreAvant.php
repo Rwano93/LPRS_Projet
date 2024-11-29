@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,3 +18,4 @@ class OffreAvant extends Model
         return $this->belongsTo(Offre::class, 'ref_offre'); // Relation avec la table offres
     }
 }
+

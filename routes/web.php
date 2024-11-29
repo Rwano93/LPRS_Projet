@@ -13,9 +13,10 @@ use App\Http\Middleware\GestionnaireMiddleware;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\ActiviteController;
+use App\Http\Controllers\AccueilController;
 
-// Ajout de routes pour Activites
-Route::resource('activite', ActiviteController::class);
+Route::get('/', [AccueilController::class, 'index'])->name('dashboard');
+
 
 
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement...
