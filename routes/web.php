@@ -12,6 +12,10 @@ use App\Http\Controllers\GestionnaireController;
 use App\Http\Middleware\GestionnaireMiddleware;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\ActiviteController;
+
+// Ajout de routes pour Activites
+Route::resource('activite', ActiviteController::class);
 
 
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement...
