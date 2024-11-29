@@ -17,8 +17,6 @@ use App\Http\Controllers\AccueilController;
 
 Route::get('/', [AccueilController::class, 'index'])->name('dashboard');
 
-
-
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement...
 Route::middleware(['auth'])->group(function () {
     Route::get('/evenements', [EvenementController::class, 'index'])->name('evenement.index');

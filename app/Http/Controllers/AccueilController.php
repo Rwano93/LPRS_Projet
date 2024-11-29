@@ -5,15 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Offre;
 use App\Models\Evenement;
 use App\Models\Actualite;
+use App\Models\ActualiteAvant;
+use App\Models\EvenementAvant;
+use App\Models\OffreAvant;
 
 class AccueilController extends Controller
 {
     public function index()
     {
-        // Exemple pour récupérer les données de tes offres, événements et actualités
-        $offers = Offre::with('offre')->latest()->take(3)->get(); // Assurez-vous que la relation 'offre' existe
-        $events = Evenement::with('evenement')->latest()->take(3)->get(); // Assurez-vous que la relation 'evenement' existe
-        $news = Actualite::latest()->take(3)->get(); // Assurez-vous qu'il n'y a pas de relation spécifique ici
+
+        // Récupération des données pour la page d'accueil
+        $events = EvenementAvant::all();
+        $news = ActualiteAvant::all();
+        $offers = OffreAvant::all();
+
 
         // Passer les données à la vue
         return view('home', compact('offers', 'events', 'news'));
