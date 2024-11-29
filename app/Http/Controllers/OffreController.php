@@ -22,23 +22,24 @@ class OffreController extends Controller
 
     public function store(Request $request)
     {
+        // Validation des données
         $request->validate([
-            'titre' => 'required|string|max:255',
-            'type' => 'required|in:stage,alternance,CDD,CDI',
-            'description' => 'required|string',
-            'missions' => 'required|string',
-            'salaire' => 'nullable|numeric|min:0',
-            'entreprise_nom' => 'required|string|max:255',
-            'entreprise_adresse' => 'required|string|max:255',
+            'titre' => 'required|max:255',
+            'description' => 'required',
+            'missions' => 'required',
+            'type' => 'required',
+            'salaire' => 'nullable|numeric',
+            'entreprise_nom' => 'required|max:255',
+            'entreprise_adresse' => 'required|max:255',
             'entreprise_code_postal' => 'required|digits:5',
-            'entreprise_ville' => 'required|string|max:255',
+            'entreprise_ville' => 'required|max:255',
             'entreprise_telephone' => 'required|digits:10',
-            'entreprise_site_web' => 'required|url|unique:entreprises,site_web',
+            'entreprise_site_web' => 'nullable|url', // Ajout de la validation pour l'URL
         ]);
 
-        // Create or find the company
+        // Créer ou récupérer l'entreprise
         $entreprise = Entreprise::firstOrCreate(
-            ['site_web' => $request->entreprise_site_web],
+            ['site_web' => $request->entreprise_site_web],  // Si le site_web est renseigné, l'entreprise sera récupérée sur cette base
             [
                 'nom' => $request->entreprise_nom,
                 'adresse' => $request->entreprise_adresse,
@@ -48,7 +49,7 @@ class OffreController extends Controller
             ]
         );
 
-        // Create the job offer
+        // Créer l'offre d'emploi
         $offre = new Offre([
             'titre' => $request->titre,
             'description' => $request->description,
@@ -57,15 +58,22 @@ class OffreController extends Controller
             'salaire' => $request->salaire,
         ]);
 
+        // Associer l'entreprise à l'offre
         $offre->entreprise()->associate($entreprise);
+
+        // Associer l'utilisateur (authentifié) à l'offre
         $offre->user()->associate(Auth::user());
+
+        // Définir l'état de l'offre comme ouverte
         $offre->est_ouverte = true;
+
+        // Sauvegarder l'offre
         $offre->save();
 
+        // Redirection après la création
         return redirect()->route('offres.index')
             ->with('success', 'Offre d\'emploi créée avec succès.');
     }
-
 
     public function show(Offre $offre)
     {
@@ -80,15 +88,17 @@ class OffreController extends Controller
 
     public function update(Request $request, Offre $offre)
     {
+        // Validation des données pour la mise à jour
         $request->validate([
-            'titre' => 'required',
-            'type' => 'required|in:CDI,CDD,alternance,stage',
+            'titre' => 'required|max:255',
             'description' => 'required',
             'missions' => 'required',
+            'type' => 'required|in:CDI,CDD,alternance,stage',
             'salaire' => 'nullable|numeric',
-            'entreprise_id' => 'required|exists:entreprises,id',
+            'entreprise_id' => 'required|exists:entreprises,id', // Vérifie que l'ID de l'entreprise existe
         ]);
 
+        // Mettre à jour l'offre d'emploi
         $offre->update($request->all());
 
         return redirect()->route('offres.index')
