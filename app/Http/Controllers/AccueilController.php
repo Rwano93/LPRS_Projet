@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActiviteAvant;
+use App\Models\ActualiteAvant;
 use App\Models\EvenementAvant;
 use App\Models\OffreAvant;
 
@@ -14,7 +14,7 @@ class AccueilController
     {
         // Récupération des données pour la page d'accueil
         $events = EvenementAvant::all();
-        $news = ActiviteAvant::all();
+        $news = ActualiteAvant::all();
         $offers = OffreAvant::all();
 
         // Affichage de la vue dashboard avec les données récupérées
