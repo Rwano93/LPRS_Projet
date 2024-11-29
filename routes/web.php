@@ -58,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Routes pour le contrôle des utilisateurs
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
     Route::resource('users', UserController::class);
 });
 
@@ -85,13 +85,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/demandes/create/entreprise', [DemandeChangementStatutController::class, 'createEntreprise'])->name('demandes.create.entreprise');
     Route::post('/demandes', [DemandeChangementStatutController::class, 'store'])->name('demandes.store');
 });
-
-    Route::middleware(['role:Gestionnaire'])->group(function () {
-        Route::get('/gestionnaire/demandes', [DemandeChangementStatutController::class, 'index'])->name('gestionnaire.demandes.index');
-        Route::get('/gestionnaire/demandes/{demande}', [DemandeChangementStatutController::class, 'show'])->name('gestionnaire.demandes.show');
-        Route::post('/gestionnaire/demandes/{demande}/approuver', [DemandeChangementStatutController::class, 'approuver'])->name('gestionnaire.demandes.approuver');
-        Route::post('/gestionnaire/demandes/{demande}/rejeter', [DemandeChangementStatutController::class, 'rejeter'])->name('gestionnaire.demandes.rejeter');
- });
 
 // Routes pour le gestionnaire
 Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {

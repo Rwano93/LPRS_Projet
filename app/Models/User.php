@@ -72,9 +72,11 @@ class User extends Authenticatable
         return $this->hasMany(DemandeChangementStatut::class);
     }
 
-    public function hasRole($role)
+    public function hasRole($roles)
     {
-        return $this->roles()->where('libelle', $role)->exists();
+        $roles = is_array($roles) ? $roles : explode('|', $roles);
+
+        return in_array($this->ref_role, $roles);
     }
     public function etudiant()
     {

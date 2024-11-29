@@ -7,6 +7,13 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Bouton de retour en haut à gauche -->
+            <div class="flex items-center mb-6">
+                <a href="{{ route('gestionnaire.demandes.index') }}" class="text-indigo-600 hover:text-indigo-900 font-semibold flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>{{ __('Retour aux demandes') }}
+                </a>
+            </div>
+            
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h3 class="text-lg font-semibold mb-4 text-blue-600">Informations de la demande :</h3>
@@ -14,7 +21,9 @@
                         <div class="sm:col-span-1">
                             <dt class="text-sm font-medium text-gray-500">Utilisateur :</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                <span class="font-semibold text-indigo-600">{{ $demande->user->name }}</span>
+                                <span class="font-semibold text-indigo-600">
+                                    {{ $demande->user->prenom }} {{ $demande->user->nom }}
+                                </span>
                             </dd>
                         </div>
                         <div class="sm:col-span-1">

@@ -13,6 +13,7 @@ class DemandeChangementStatutController extends Controller
 {
     public function index()
     {
+        $demandes = DemandeChangementStatut::with('user', 'role')->get(); // Charge 'user' et 'role'
         $user = Auth::user();
         $roles = Role::whereIn('libelle', ['Etudiant', 'Professeur', 'Alumni', 'Entreprise'])->get();
         
@@ -67,7 +68,7 @@ class DemandeChangementStatutController extends Controller
     } else {
         Log::warning('Pas de fichier CV ou fichier invalide');
     }
-
+    dd(request()->all());
     try {
         // Création de la demande avec les données validées
         $demande = DemandeChangementStatut::create([

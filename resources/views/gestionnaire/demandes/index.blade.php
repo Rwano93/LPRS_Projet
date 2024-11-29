@@ -5,81 +5,237 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <!-- Tableau avec une meilleure présentation -->
-                    <table class="min-w-full divide-y divide-gray-200 table-auto">
-                        <thead class="bg-indigo-100">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut demandé</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de demande</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut actuel</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($demandes as $demande)
-                                <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        <span class="font-semibold text-indigo-600">{{ $demande->user->name }}</span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        <span class="text-indigo-600 font-medium">{{ $demande->role->libelle }}</span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $demande->created_at->format('d/m/Y H:i') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                        <span class="px-3 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            @if($demande->statut == 'en_attente') bg-yellow-100 text-yellow-800
-                                            @elseif($demande->statut == 'approuve') bg-green-100 text-green-800
-                                            @else bg-red-100 text-red-800 @endif">
-                                            {{ ucfirst($demande->statut) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('gestionnaire.demandes.show', $demande) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">Voir</a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            <div class="bg-white shadow-2xl rounded-lg overflow-hidden">
+                <div class="p-6 bg-gradient-to-r from-teal-100 via-blue-50 to-teal-100 border-b border-gray-200">
+                    <h3 class="text-3xl font-semibold text-gray-800 mb-6">Demandes en attente</h3>
 
-                    <!-- Si aucune demande n'est présente -->
-                    @if ($demandes->isEmpty())
-                        <div class="mt-4 text-center text-gray-500">
-                            <p>Aucune demande n'a été effectuée pour le moment.</p>
+                    <!-- Barre de recherche et filtre par statut -->
+                    <div class="mb-6 flex items-center justify-between space-x-6">
+                        <!-- Barre de recherche -->
+                        <div class="relative w-1/2 max-w-sm">
+                            <input type="text" id="search" class="block w-full px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500" placeholder="Rechercher par nom, rôle, date..." oninput="searchTable()">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM21 21l-4.35-4.35"></path>
+                                </svg>
+                            </div>
                         </div>
-                    @endif
+                        <!-- Menu déroulant pour filtrer par statut -->
+                        <div class="relative w-2/5 max-w-xs"> <!-- Augmentation supplémentaire de la largeur -->
+                            <select id="statusFilter" class="block w-full pl-6 pr-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 appearance-none text-left">
+                                <option value="">Filtrer par statut</option>
+                                <option value="en_attente">En attente</option>
+                                <option value="approuve">Approuvé</option>
+                                <option value="refuse">Refusé</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Tableau -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-300 table-auto" id="demandeTable">
+                            <thead class="sticky top-0 bg-black text-white">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Utilisateur</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Statut demandé</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Date</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Statut actuel</th>
+                                    <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse ($demandes as $demande)
+                                    <tr class="hover:bg-gray-50 transition duration-200 ease-in-out">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @if($demande->user)
+                                                <span class="text-gray-800 font-semibold">{{ $demande->user->nom }}</span>
+                                            @else
+                                                <span class="text-gray-500 italic">Utilisateur inconnu</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-700">
+                                            @if($demande->role)
+                                                {{ $demande->role->libelle }}
+                                            @else
+                                                <span class="text-gray-500 italic">Rôle non défini</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                            {{ $demande->created_at->format('d/m/Y H:i') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                @if($demande->statut == 'en_attente') bg-yellow-200 text-yellow-800
+                                                @elseif($demande->statut == 'approuve') bg-green-200 text-green-800
+                                                @else bg-red-200 text-red-800 @endif">
+                                                {{ ucfirst($demande->statut) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                            <a href="{{ route('gestionnaire.demandes.show', $demande) }}" 
+                                               class="text-teal-600 hover:text-teal-800 hover:underline transition ease-in-out duration-200">
+                                                Voir
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <!-- Aucune demande -->
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                            <p>Aucune demande enregistrée.</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Scripts personnalisés -->
+    <script>
+        // Fonction de recherche dans le tableau
+        function searchTable() {
+            const input = document.getElementById('search');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('demandeTable');
+            const trs = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < trs.length; i++) {
+                let tdName = trs[i].getElementsByTagName('td')[0];
+                let tdRole = trs[i].getElementsByTagName('td')[1];
+                let tdDate = trs[i].getElementsByTagName('td')[2];
+                let tdStatus = trs[i].getElementsByTagName('td')[3];
+
+                if (tdName && tdRole && tdDate && tdStatus) {
+                    let txtName = tdName.textContent || tdName.innerText;
+                    let txtRole = tdRole.textContent || tdRole.innerText;
+                    let txtDate = tdDate.textContent || tdDate.innerText;
+                    let txtStatus = tdStatus.textContent || tdStatus.innerText;
+
+                    if (
+                        txtName.toLowerCase().includes(filter) ||
+                        txtRole.toLowerCase().includes(filter) ||
+                        txtDate.toLowerCase().includes(filter) ||
+                        txtStatus.toLowerCase().includes(filter)
+                    ) {
+                        trs[i].style.display = "";
+                    } else {
+                        trs[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        // Fonction de filtrage par statut
+        function filterByStatus() {
+            const select = document.getElementById('statusFilter');
+            const filter = select.value.toLowerCase();
+            const table = document.getElementById('demandeTable');
+            const trs = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < trs.length; i++) {
+                let tdStatus = trs[i].getElementsByTagName('td')[3];
+                if (tdStatus) {
+                    let txtStatus = tdStatus.textContent || tdStatus.innerText;
+                    if (filter === "" || txtStatus.toLowerCase().includes(filter)) {
+                        trs[i].style.display = "";
+                    } else {
+                        trs[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Styles personnalisés -->
     <style>
+        body {
+            background-color: #f9fafb;
+        }
+
+        /* Fixation de l'en-tête du tableau */
+        .table-auto thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table-auto th {
+            letter-spacing: 0.05em;
+            padding: 18px;
+            text-transform: uppercase;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #000000;
+        }
+
+        .table-auto td {
+            padding: 15px 20px;
+            font-size: 0.875rem;
+        }
+
+        .table-auto tr:hover {
+            background-color: #f3f4f6;
+            transform: scale(1.02);
+        }
+
+        .table-auto td a {
+            transition: color 0.2s ease-in-out;
+        }
+
+        .table-auto td a:hover {
+            color: #2c7a7b;
+        }
+
+        /* Retirer la flèche du select */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        /* Augmenter la taille et le padding du select */
+        select {
+            padding-left: 1.5rem; /* Augmenter le padding à gauche */
+            padding-right: 1rem; /* Réduire le padding à droite pour éviter que le texte soit trop proche du bord */
+            font-size: 1rem; /* Taille de police un peu plus grande */
+        }
+
+        /* Mobile responsive styles */
         @media (max-width: 640px) {
             .table-auto th, .table-auto td {
-                padding: 8px;
+                padding: 12px;
             }
-            .table-auto td {
-                font-size: 14px;
-            }
+
             .table-auto thead {
-                display: none;  /* Masquer les en-têtes pour les petits écrans */
+                display: none;
             }
+
             .table-auto tr {
                 display: block;
                 margin-bottom: 10px;
-                border: 1px solid #ddd;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                padding: 10px;
             }
+
+            .table-auto td {
+                display: block;
+                text-align: right;
+                font-size: 14px;
+            }
+
             .table-auto td::before {
                 content: attr(data-label);
+                float: left;
                 font-weight: bold;
-                display: block;
-                margin-bottom: 5px;
+                text-transform: uppercase;
+                color: #6b7280;
             }
         }
     </style>

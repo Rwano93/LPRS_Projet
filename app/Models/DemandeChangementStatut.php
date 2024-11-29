@@ -23,9 +23,9 @@ class DemandeChangementStatut extends Model
 
     // Vous pouvez aussi ajouter des relations comme :
     public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
 
     public function role()
     {
