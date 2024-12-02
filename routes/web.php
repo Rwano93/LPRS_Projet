@@ -99,6 +99,8 @@ Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
     Route::get('/gestionnaire/statistiques', [GestionnaireController::class, 'statistiques'])->name('gestionnaire.statistiques');
 });
 
+
+
 // Route pour le tableau de bord
 Route::middleware([
     'auth:sanctum',
