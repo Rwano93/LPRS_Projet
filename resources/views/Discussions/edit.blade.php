@@ -1,9 +1,6 @@
 
 <!-- resources/views/discussions/create.blade.php -->
-
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 
     <form action="{{ route('discussions.store') }}" method="POST">
         @csrf
@@ -26,4 +23,4 @@
         <button type="submit">Créer une discussion</button>
     </form>
 
-@endsection
+    </x-app-layout>

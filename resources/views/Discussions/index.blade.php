@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', 'Forum')
-
-@section('content')
+<x-app-layout>
     <div class="container mt-5">
         <h1 class="text-center mb-4">Forum de Discussions</h1>
 
@@ -36,5 +32,5 @@
         </div>
     </div>
 
-@endsection
+</x-app-layout>
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">

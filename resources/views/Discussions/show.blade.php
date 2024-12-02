@@ -1,19 +1,12 @@
-@extends('layouts.app')
 
-@section('title', $discussion->title)
 
-@section('content')
-    <div class="container">
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
         @endif
-
+            <x-app-layout>
         <div class="discussion-header text-center mb-4">
             <h2>{{ $discussion->title }}</h2>
             <p class="text-muted">Créé par <strong>{{ $discussion->user->name }}</strong> le {{ $discussion->created_at->format('d M Y à H:i') }}</p>
@@ -60,7 +53,7 @@
         <div class="mt-4 text-center">
             <a href="{{ route('forum.index') }}" class="btn btn-link">Retour au Forum</a>
         </div>
-    </div>
-@endsection
+
+    </x-app-layout>
 
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">

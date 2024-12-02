@@ -1,6 +1,4 @@
-@extends('layouts.app')
 
-@section('title', 'Créer une Discussion')
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -10,7 +8,7 @@
         </ul>
     </div>
 @endif
-@section('content')
+<x-app-layout>
     <div class="container mt-5">
         <h1 class="text-center mb-4">Créer une Nouvelle Discussion</h1>
 
@@ -47,5 +45,5 @@
             <a href="{{ route('forum.index') }}" class="btn btn-link">Retour au Forum</a>
         </div>
     </div>
-@endsection
+</x-app-layout>>
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
