@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\NiveauEtude;
 
 class DemandeChangementStatutController extends Controller
 {
@@ -107,10 +108,11 @@ class DemandeChangementStatutController extends Controller
     }
 
     public function createEtudiant()
-    {
-        $role = Role::where('libelle', 'Etudiant')->firstOrFail();
-        return view('demandes.forms.etudiant', compact('role'));
-    }
+{
+    $role = Role::where('libelle', 'Etudiant')->firstOrFail();
+    $niveauxEtude = NiveauEtude::all(); 
+    return view('demandes.forms.etudiant', compact('role', 'niveauxEtude'));
+}
 
     public function createProfesseur()
     {
