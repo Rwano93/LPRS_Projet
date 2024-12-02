@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DemandeChangementStatut extends Model
@@ -21,11 +20,10 @@ class DemandeChangementStatut extends Model
         'poste',
     ];
 
-    // Vous pouvez aussi ajouter des relations comme :
     public function user()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function role()
     {
@@ -37,4 +35,3 @@ class DemandeChangementStatut extends Model
         return $this->belongsTo(Formation::class);
     }
 }
-

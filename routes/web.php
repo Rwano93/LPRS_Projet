@@ -89,6 +89,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/demandes', [DemandeChangementStatutController::class, 'store'])->name('demandes.store');
 });
 
+Route::middleware(['auth', 'role:gestionnaire'])->group(function () {
+    Route::get('/gestionnaire/dashboard', [DemandeChangementStatutController::class, 'gestionnaireDashboard'])->name('gestionnaire.dashboard');
+    Route::post('/demandes/{demande}/approuver', [DemandeChangementStatutController::class, 'approuver'])->name('gestionnaire.demandes.approuver');
+    Route::post('/demandes/{demande}/rejeter', [DemandeChangementStatutController::class, 'rejeter'])->name('gestionnaire.demandes.rejeter');
+});
+
 // Routes pour le gestionnaire
 Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
     Route::get('/gestionnaire/dashboard', [GestionnaireController::class, 'dashboard'])->name('gestionnaire.dashboard');

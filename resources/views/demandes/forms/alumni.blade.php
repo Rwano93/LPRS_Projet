@@ -3,17 +3,6 @@
         <div class="max-w-3xl mx-auto">
             <div class="bg-white shadow-xl rounded-lg overflow-hidden">
                 <div class="p-8">
-                    <!-- Affichage des messages de succès ou d'erreur -->
-                    @if(session('success'))
-                        <div class="bg-green-500 text-white p-4 rounded-md mb-6">
-                            <p class="font-semibold">{{ session('success') }}</p>
-                        </div>
-                    @elseif(session('error'))
-                        <div class="bg-red-500 text-white p-4 rounded-md mb-6">
-                            <p class="font-semibold">{{ session('error') }}</p>
-                        </div>
-                    @endif
-
                     <h2 class="text-3xl font-semibold text-gray-800 mb-6">
                         Demande de changement de statut - Alumni
                     </h2>
@@ -23,9 +12,9 @@
                         <input type="hidden" name="role_id" value="{{ $role->id ?? '' }}">
 
                         <div>
-                            <label for="annee_diplome" class="block text-sm font-medium text-gray-700">Année d'obtention du diplôme</label>
-                            <input type="number" name="annee_diplome" id="annee_diplome" min="1900" max="{{ date('Y') }}" required
-                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <label for="annee_diplome" class="block text-sm font-medium text-gray-700">Année d'obtention du diplôme</label>
+                        <input type="number" name="annee_diplome" id="annee_diplome" min="1900" max="{{ date('Y') }}" required
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
 
                         <div>
@@ -33,6 +22,7 @@
                             <input type="text" name="emploi_actuel" id="emploi_actuel" required
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
+
 
                         <div>
                             <label for="cv" class="block text-sm font-medium text-gray-700">CV (PDF)</label>
@@ -61,3 +51,4 @@
         </div>
     </div>
 </x-app-layout>
+
