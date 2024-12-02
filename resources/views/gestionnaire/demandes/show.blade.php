@@ -59,12 +59,14 @@
                     <div class="mt-8">
                         @if($demande->statut == 'en_attente')
                             <div class="flex justify-between space-x-4">
+                                <!-- Formulaire d'approbation -->
                                 <form action="{{ route('gestionnaire.demandes.approuver', $demande) }}" method="POST">
                                     @csrf
                                     <x-button class="bg-green-500 hover:bg-green-700 transition duration-300 ease-in-out shadow-md">
                                         <i class="fas fa-check-circle mr-2"></i>{{ __('Approuver') }}
                                     </x-button>
                                 </form>
+                                <!-- Formulaire de rejet -->
                                 <form action="{{ route('gestionnaire.demandes.rejeter', $demande) }}" method="POST">
                                     @csrf
                                     <x-button class="bg-red-500 hover:bg-red-700 transition duration-300 ease-in-out shadow-md">
@@ -85,10 +87,15 @@
         </div>
     </div>
 
-    <!-- Ajout d'une section de notifications ou de confirmations -->
+    <!-- Notifications -->
     @if(session('success'))
-        <div class="fixed top-0 left-0 right-0 mt-4 p-4 bg-green-500 text-white text-center shadow-lg rounded-md">
-            <p>{{ session('success') }}</p>
+        <div class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-md shadow-lg">
+            {{ session('error') }}
         </div>
     @endif
 </x-app-layout>
