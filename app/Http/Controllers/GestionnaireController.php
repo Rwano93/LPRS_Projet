@@ -32,10 +32,10 @@ class GestionnaireController extends Controller
 
     public function gererDemandes()
     {
-        $demandes = DemandeChangementStatut::with('user', 'role', 'formation')->get();
+        $demandes = DemandeChangementStatut::with('user', 'role', 'formation')->paginate(10);
+
         return view('gestionnaire.demandes.index', compact('demandes'));
     }
-
     public function voirDemande(DemandeChangementStatut $demande)
     {
         return view('gestionnaire.demandes.show', compact('demande'));

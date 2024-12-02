@@ -14,91 +14,91 @@
                 @if (Route::has('login'))
                     <nav class="-mx-3 flex flex-1 justify-end">
                         @auth
-                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                            {{ __('Accueil') }}
-                        </x-nav-link>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                                {{ __('Accueil') }}
+                            </x-nav-link>
 
-                        @if(Auth::user()->ref_role == 1)
-                            <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
-                                {{ __('Contact Us') }}
-                            </x-nav-link>
-                        @endif
+                            @if(Auth::user()->ref_role == 1)
+                                <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
+                                    {{ __('Contact Us') }}
+                                </x-nav-link>
+                            @endif
 
-                        @if(Auth::user()->ref_role == 2)
-                            <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
-                                {{ __('Offres d\'emploi') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
-                                {{ __('Forum') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
-                                {{ __('Événements') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
-                                {{ __('Contact Us') }}
-                            </x-nav-link>
-                        @endif
+                            @if(Auth::user()->ref_role == 2)
+                                <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
+                                    {{ __('Offres d\'emploi') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
+                                    {{ __('Forum') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
+                                    {{ __('Événements') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
+                                    {{ __('Contact Us') }}
+                                </x-nav-link>
+                            @endif
 
-                        @if(Auth::user()->ref_role == 3)
-                            <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
-                                {{ __('Offres d\'emploi') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
-                                {{ __('Forum') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
-                                {{ __('Événements') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
-                                {{ __('Contact Us') }}
-                            </x-nav-link>
-                        @endif
+                            @if(Auth::user()->ref_role == 3)
+                                <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
+                                    {{ __('Offres d\'emploi') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
+                                    {{ __('Forum') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
+                                    {{ __('Événements') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
+                                    {{ __('Contact Us') }}
+                                </x-nav-link>
+                            @endif
 
-                        @if(Auth::user()->ref_role == 4)
-                            <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
-                                {{ __('Offres d\'emploi') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
-                                {{ __('Forum') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
-                                {{ __('Événements') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
-                                {{ __('Contact Us') }}
-                            </x-nav-link>
-                        @endif
+                            @if(Auth::user()->ref_role == 4)
+                                <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
+                                    {{ __('Offres d\'emploi') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
+                                    {{ __('Forum') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
+                                    {{ __('Événements') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
+                                    {{ __('Contact Us') }}
+                                </x-nav-link>
+                            @endif
 
-                        @if(Auth::user()->ref_role == 5)
-                            <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
-                                {{ __('Offres d\'emploi') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
-                                {{ __('Forum') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
-                                {{ __('Événements') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
-                                {{ __('Contact Us') }}
-                            </x-nav-link>
-                        @endif
+                            @if(Auth::user()->ref_role == 5)
+                                <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
+                                    {{ __('Offres d\'emploi') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
+                                    {{ __('Forum') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
+                                    {{ __('Événements') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
+                                    {{ __('Contact Us') }}
+                                </x-nav-link>
+                            @endif
 
-                        @if(Auth::user()->ref_role == 6)
-                            <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
-                                {{ __('Offres d\'emploi') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
-                                {{ __('Forum') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
-                                {{ __('Événements') }}
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
-                                {{ __('Contact Us') }}
-                            </x-nav-link>
-                        @endif
+                            @if(Auth::user()->ref_role == 6)
+                                <x-nav-link href="{{ route('offres.index') }}" :active="request()->routeIs('offres.index')">
+                                    {{ __('Offres d\'emploi') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('forum.index') }}" :active="request()->routeIs('forum.index')">
+                                    {{ __('Forum') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('evenement.index') }}" :active="request()->routeIs('evenement.index')">
+                                    {{ __('Événements') }}
+                                </x-nav-link>
+                                <x-nav-link href="{{ route('contact.show') }}" :active="request()->routeIs('contact.show')">
+                                    {{ __('Contact Us') }}
+                                </x-nav-link>
+                            @endif
                             </div>
                         @endauth
                     </nav>
