@@ -23,8 +23,8 @@
                             </div>
                         </div>
                         <!-- Menu déroulant pour filtrer par statut -->
-                        <div class="relative w-2/5 max-w-xs"> <!-- Augmentation supplémentaire de la largeur -->
-                            <select id="statusFilter" class="block w-full pl-6 pr-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 appearance-none text-left">
+                        <div class="relative w-2/5 max-w-xs">
+                            <select id="statusFilter" class="block w-full pl-6 pr-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 appearance-none text-left" onchange="filterByStatus()">
                                 <option value="">Filtrer par statut</option>
                                 <option value="en_attente">En attente</option>
                                 <option value="approuve">Approuvé</option>
@@ -90,6 +90,42 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- Nouvelle Pagination -->
+                    <div class="flex justify-center items-center space-x-2 mt-8">
+                        @if ($demandes->onFirstPage())
+                            <span class="p-2 rounded-full bg-black text-white cursor-not-allowed">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        @else
+                            <a href="{{ $demandes->previousPageUrl() }}" class="p-2 rounded-full bg-black text-white hover:bg-gray-800 transition-colors duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        @endif
+
+                        @foreach ($demandes->getUrlRange(1, $demandes->lastPage()) as $page => $url)
+                            <a href="{{ $url }}" class="w-10 h-10 flex items-center justify-center rounded-full text-sm font-medium transition-colors duration-200 {{ $page == $demandes->currentPage() ? 'bg-blue-500 text-white' : 'bg-black text-white hover:bg-gray-800' }}">
+                                {{ $page }}
+                            </a>
+                        @endforeach
+
+                        @if ($demandes->hasMorePages())
+                            <a href="{{ $demandes->nextPageUrl() }}" class="p-2 rounded-full bg-black text-white hover:bg-gray-800 transition-colors duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        @else
+                            <span class="p-2 rounded-full bg-black text-white cursor-not-allowed">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -149,6 +185,26 @@
                 }
             }
         }
+
+        // Pagination interactive
+        document.addEventListener('DOMContentLoaded', function() {
+            const paginationLinks = document.querySelectorAll('.flex.justify-center.items-center.space-x-2.mt-8 a');
+            paginationLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    fetch(this.href)
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const newContent = doc.querySelector('.py-12.bg-gray-50');
+                            const currentContent = document.querySelector('.py-12.bg-gray-50');
+                            currentContent.innerHTML = newContent.innerHTML;
+                            window.history.pushState({}, '', this.href);
+                        });
+                });
+            });
+        });
     </script>
 
     <!-- Styles personnalisés -->
@@ -201,9 +257,9 @@
 
         /* Augmenter la taille et le padding du select */
         select {
-            padding-left: 1.5rem; /* Augmenter le padding à gauche */
-            padding-right: 1rem; /* Réduire le padding à droite pour éviter que le texte soit trop proche du bord */
-            font-size: 1rem; /* Taille de police un peu plus grande */
+            padding-left: 1.5rem;
+            padding-right: 1rem;
+            font-size: 1rem;
         }
 
         /* Mobile responsive styles */
@@ -240,3 +296,4 @@
         }
     </style>
 </x-app-layout>
+
