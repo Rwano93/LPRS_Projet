@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
@@ -65,11 +66,11 @@ class User extends Authenticatable
         return $this->hasOne(Professeur::class, 'ref_user');
     }
 
-    public function entreprises()
+    public function entreprises(): BelongsToMany
     {
         return $this->belongsToMany(Entreprise::class, 'entreprise_user')
-            ->withPivot('poste')
-            ->withTimestamps();
+                    ->withPivot('poste', 'motif_inscription')
+                    ->withTimestamps();
     }
 
     public function getProfileAttribute()

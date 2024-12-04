@@ -214,6 +214,11 @@
                                     {{ __('Panel Utilisateurs') }}
                                 </x-dropdown-link>
                                 @endif
+                                @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 3)
+                                <x-dropdown-link href="{{ route('entreprises.index') }}" :active="request()->routeIs('entreprises.index')">
+                                    {{ __('Panel Entreprises') }}
+                                </x-dropdown-link>
+                                @endif
                                 <div class="border-t border-gray-200"></div>
  
                                 <form method="POST" action="{{ route('logout') }}" x-data>

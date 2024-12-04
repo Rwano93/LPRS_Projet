@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreignId('entreprise_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('poste');
+            $table->text('motif_inscription')->nullable();
             $table->timestamps();
         });
     }
