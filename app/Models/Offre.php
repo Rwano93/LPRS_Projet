@@ -33,4 +33,8 @@ class Offre extends Model
     {
         return $this->hasOne(OffreAvant::class, 'ref_offre');
     }
+    public function formations()
+    {
+        return $this->belongsToMany(Formation::class, 'formation_offre');
+    }
 }

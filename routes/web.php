@@ -14,6 +14,7 @@ use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\ActiviteController;
 use App\Http\Controllers\AccueilController;
+use App\Http\Controllers\FileController;
 
 Route::get('/', [AccueilController::class, 'index'])->name('dashboard');
 
@@ -105,7 +106,7 @@ Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
     Route::get('/gestionnaire/statistiques', [GestionnaireController::class, 'statistiques'])->name('gestionnaire.statistiques');
 });
 
-
+Route::get('cv/{filename}', [FileController::class, 'serveFile'])->name('serve.cv');
 
 // Route pour le tableau de bord
 Route::middleware([

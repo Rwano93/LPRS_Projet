@@ -32,6 +32,8 @@ class DemandeChangementStatut extends Model
 
     public function formation()
     {
+        
         return $this->belongsTo(Formation::class);
     }
+    
 }

@@ -108,11 +108,11 @@ class DemandeChangementStatutController extends Controller
     }
 
     public function createEtudiant()
-{
-    $role = Role::where('libelle', 'Etudiant')->firstOrFail();
-    $niveauxEtude = NiveauEtude::all(); 
-    return view('demandes.forms.etudiant', compact('role', 'niveauxEtude'));
-}
+    {
+        $role = Role::where('libelle', 'Etudiant')->firstOrFail();
+        $niveauxEtude = NiveauEtude::all(); 
+        return view('demandes.forms.etudiant', compact('role', 'niveauxEtude'));
+    }
 
     public function createProfesseur()
     {
@@ -160,6 +160,7 @@ class DemandeChangementStatutController extends Controller
                 'entreprise' => $request->nom_entreprise ?? null,
                 'poste' => $request->poste ?? null,
             ]);
+            
 
             Log::info('Demande créée', ['demande' => $demande]);
 
