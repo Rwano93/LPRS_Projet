@@ -69,7 +69,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                     @foreach(range(1, 3) as $index)
                         <div class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105">
-                            <div class="p-6">
+                            <div class="p-6" >
                                 <h3 class="text-xl font-semibold text-gray-900 mb-3">Poste {{ $index }}</h3>
                                 <p class="text-gray-600 mb-6">Description brève du poste...</p>
                                 <a href="/offres.index" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

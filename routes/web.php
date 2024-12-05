@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\OffreMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\EvenementAvantController;
@@ -16,10 +17,11 @@ use App\Http\Controllers\ActiviteController;
 use App\Http\Controllers\AccueilController;
 use App\Http\Controllers\FileController;
 
+
 Route::get('/', [AccueilController::class, 'index'])->name('dashboard');
 
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement...
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', OffreMiddleware::class])->group(function () {
     Route::get('/evenements', [EvenementController::class, 'index'])->name('evenement.index');
     Route::get('/evenements/create', [EvenementController::class, 'create'])->name('evenement.create');
     Route::post('/evenements', [EvenementController::class, 'store'])->name('evenement.store');
@@ -72,8 +74,8 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 Route::get('/contact/confirmation', [ContactController::class, 'confirmation'])->name('contact.confirmation');
 
 // Routes pour les offres d'emploi
+Route::middleware(['auth', OffreMiddleware::class])->group(function () {
 Route::resource('offres', OffreController::class);
-Route::middleware(['auth'])->group(function () {
     Route::get('/offres', [OffreController::class, 'index'])->name('offres.index');
     Route::post('/offres', [OffreController::class, 'store'])->name('offres.store');
     Route::put('/offres/{offre}', [OffreController::class, 'update'])->name('offres.update');
@@ -90,11 +92,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/demandes', [DemandeChangementStatutController::class, 'store'])->name('demandes.store');
 });
 
-Route::middleware(['auth', 'role:gestionnaire'])->group(function () {
-    Route::get('/gestionnaire/dashboard', [DemandeChangementStatutController::class, 'gestionnaireDashboard'])->name('gestionnaire.dashboard');
-    Route::post('/demandes/{demande}/approuver', [DemandeChangementStatutController::class, 'approuver'])->name('gestionnaire.demandes.approuver');
-    Route::post('/demandes/{demande}/rejeter', [DemandeChangementStatutController::class, 'rejeter'])->name('gestionnaire.demandes.rejeter');
-});
 
 // Routes pour le gestionnaire
 Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
