@@ -16,6 +16,7 @@ use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\ActiviteController;
 use App\Http\Controllers\AccueilController;
 use App\Http\Controllers\FileController;
+use App\Mail\HelloMail;
 
 
 Route::get('/', [AccueilController::class, 'index'])->name('dashboard');
@@ -68,9 +69,10 @@ Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
 });
 
 // Routes pour le contact
-Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::get('/contact', [ContactController::class, 'showForm'])->name('contact.show');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
-Route::get('/contact/confirmation', [ContactController::class, 'confirmation'])->name('contact.confirmation');
+Route::get('/contact/success', [ContactController::class, 'success'])->name('contact.success');
+
 
 // Routes pour les offres d'emploi
 Route::middleware(['auth', OffreMiddleware::class])->group(function () {
