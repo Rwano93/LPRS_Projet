@@ -33,6 +33,7 @@ Route::middleware(['auth', OffreMiddleware::class])->group(function () {
     Route::delete('/evenements/{evenement}/desinscription', [EvenementController::class, 'desinscription'])->name('evenement.desinscription');
     Route::get('/evenements/{evenement}/inscrits', [EvenementController::class, 'inscrits'])->name('evenement.inscrits');
     Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])->name('evenement.removeUserFromEvent');
+    
 });
 Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])
     ->name('evenement.removeUserFromEvent');
@@ -55,8 +56,6 @@ Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store
 Route::resource('discussions', DiscussionController::class);
 Route::get('/discussions', [DiscussionController::class, 'index'])->name('discussion.index');
 
-Route::get('/', [EvenementAvantController::class, 'index'])->name('home');
-Route::get('/dashboard', [EvenementAvantController::class, 'index'])->name('dashboard');
 
 // Routes pour les actualités
 Route::middleware(['auth'])->group(function () {
@@ -111,7 +110,6 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AccueilController::class, 'index'])->name('dashboard');
+
 });

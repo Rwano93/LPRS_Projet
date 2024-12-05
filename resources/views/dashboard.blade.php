@@ -16,75 +16,135 @@
 
         <!-- Main Content -->
         <main class="flex-grow">
-            <!-- Présentation de l'école -->
-            <section class="bg-white shadow-lg rounded-lg mx-4 sm:mx-6 lg:mx-8 my-12 overflow-hidden">
-                <div class="md:flex">
-                    <div class="md:flex-shrink-0">
-                        <img class="h-48 w-full object-cover md:w-48" src="/placeholder.svg?height=300&width=400" alt="Lycée Robert-Schuman">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                @if (session('error'))
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg animate-fade-in-down" role="alert">
+                        <p class="font-bold">Erreur</p>
+                        <p>{{ session('error') }}</p>
                     </div>
-                    <div class="p-8">
-                        <h2 class="text-2xl font-semibold text-gray-900 mb-4">Notre Mission</h2>
-                        <p class="mt-2 text-gray-600 mb-6">
-                            Le Lycée Robert-Schuman s'engage à fournir une éducation de qualité, à préparer les étudiants pour l'avenir et à cultiver un environnement d'apprentissage innovant et inclusif.
-                        </p>
-                        <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            En savoir plus
-                            <svg class="ml-2 -mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </a>
+                @endif
+                @if(session('status'))
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg animate-fade-in-down" role="alert">
+                        <p class="font-bold">Succès</p>
+                        <p>{{ session('status') }}</p>
                     </div>
-                </div>
-            </section>
-            <!--Ajout d'espace-->
-            &nbsp;&nbsp;&nbsp;
+                @endif
 
             <!-- Actualités et Événements -->
-            <section class="mt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-semibold text-gray-900 mb-8">Actualités et Événements</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    @foreach(range(1, 3) as $index)
-                        <div class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105">
-                            <img class="w-full h-48 object-cover rounded-t-lg" src="/placeholder.svg?height=200&width=400" alt="Événement {{ $index }}">
-                            <div class="p-6">
-                                <h3 class="text-xl font-semibold text-gray-900 mb-3">Événement {{ $index }}</h3>
-                                <p class="text-gray-600 mb-6">Description brève de l'événement ou de l'actualité...</p>
-                                <a href="/evenements" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    En savoir plus
-                                    <svg class="ml-2 -mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </a>
+            <section class="mb-16">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-semibold text-gray-900">Actualités et Événements</h2>
+                </div>
+                <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    @forelse($evenements as $evenement)
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-xl flex flex-col">
+                            <div class="flex-grow p-6">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h3 class="text-2xl font-bold text-indigo-900">{{ $evenement->titre }}</h3>
+                                    <span class="text-sm font-medium text-indigo-600 bg-indigo-100 rounded-full px-3 py-1">
+                                        {{ $evenement->type }}
+                                    </span>
+                                </div>
+                                <p class="text-gray-600 mb-4">{{ Str::limit($evenement->description, 100) }}</p>
+                                <div class="space-y-2 text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <svg class="mr-2 h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                        </svg>
+                                        {{ $evenement->date->format('d/m/Y H:i') }}
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg class="mr-2 h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                        </svg>
+                                        {{ Str::mask($evenement->adresse, '*', 3) }}
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg class="mr-2 h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                        </svg>
+                                        Places disponibles : {{ Str::mask($evenement->nb_place, '*', 0, 1) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-indigo-50 p-6">
+                                <div class="flex justify-between items-center">
+                                    @guest
+                                        <a href="{{ route('login') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg">
+                                            Se connecter pour en savoir plus
+                                        </a>
+                                    @elseif(auth()->user()->ref_role == 1)
+                                        <a href="/demandes" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg">
+                                            Changer de statut pour accéder
+                                        </a>
+                                    @else
+                                        <a href="/evenements" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg">
+                                            En savoir plus
+                                        </a>
+                                    @endguest
+                                </div>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-gray-600">Aucun événement à afficher pour le moment.</p>
+                    @endforelse
                 </div>
             </section>
 
             <!-- Offres d'emploi -->
-            <section class="mt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-                <!--Ajout d'espace-->
-                &nbsp;&nbsp;&nbsp;
+            <section class="mb-16">
                 <h2 class="text-3xl font-semibold text-gray-900 mb-8">Offres d'emploi récentes</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    @foreach(range(1, 3) as $index)
-                        <div class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105">
-                            <div class="p-6" >
-                                <h3 class="text-xl font-semibold text-gray-900 mb-3">Poste {{ $index }}</h3>
-                                <p class="text-gray-600 mb-6">Description brève du poste...</p>
-                                <a href="/offres.index" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    En savoir plus
-                                    <svg class="ml-2 -mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </a>
+                <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    @forelse($offres as $offre)
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-xl flex flex-col">
+                            <div class="flex-grow p-6">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h3 class="text-2xl font-bold text-indigo-900">{{ $offre->titre }}</h3>
+                                    <span class="text-sm font-medium text-indigo-600 bg-indigo-100 rounded-full px-3 py-1">
+                                        {{ $offre->type }}
+                                    </span>
+                                </div>
+                                <p class="text-gray-600 mb-4">{{ Str::limit($offre->description, 100) }}</p>
+                                <div class="space-y-2 text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <svg class="mr-2 h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
+                                            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
+                                        </svg>
+                                        {{ $offre->entreprise->nom }}
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg class="mr-2 h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                        </svg>
+                                        {{ Str::mask($offre->entreprise->ville, '*', 3) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-indigo-50 p-6">
+                                <div class="flex justify-between items-center">
+                                    @guest
+                                        <a href="{{ route('login') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg">
+                                            Se connecter pour en savoir plus
+                                        </a>
+                                    @elseif(auth()->user()->ref_role == 1)
+                                        <a href="/demandes" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg">
+                                            Changer de statut pour accéder
+                                        </a>
+                                    @else
+                                        <a href="{{ route('offres.show', $offre->id) }}" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg">
+                                            En savoir plus
+                                        </a>
+                                    @endguest
+                                </div>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-gray-600">Aucune offre d'emploi à afficher pour le moment.</p>
+                    @endforelse
                 </div>
-                <!--Ajout d'espace-->
-                &nbsp;&nbsp;&nbsp;
             </section>
+            </div>
         </main>
         
         <!-- Call to Action Section -->
@@ -132,3 +192,4 @@
         </footer>
     </div>
 </x-app-layout>
+

@@ -72,6 +72,10 @@ class User extends Authenticatable
                     ->withPivot('poste', 'motif_inscription')
                     ->withTimestamps();
     }
+    public function candidatures()
+    {
+        return $this->hasMany(Candidature::class);
+    }
 
     public function getProfileAttribute()
     {
