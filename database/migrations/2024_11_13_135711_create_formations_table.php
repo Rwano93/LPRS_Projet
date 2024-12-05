@@ -16,17 +16,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
         });
-
-        // Insérer les formations par défaut
-        DB::table('formations')->insert([
-            ['nom' => 'TRPM', 'type' => 'Bac professionnel'],
-            ['nom' => 'MSPC', 'type' => 'Bac professionnel'],
-            ['nom' => 'CIEL', 'type' => 'Bac professionnel'],
-            ['nom' => 'STI2D', 'type' => 'Bac technologique'],
-            ['nom' => 'CPRP', 'type' => 'BTS'],
-            ['nom' => 'MSPC', 'type' => 'BTS'],
-            ['nom' => 'SIO', 'type' => 'BTS'],
-        ]);
+    
     }
 
     public function down()

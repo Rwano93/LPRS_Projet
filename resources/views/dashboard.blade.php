@@ -132,4 +132,3 @@
         </footer>
     </div>
 </x-app-layout>
-

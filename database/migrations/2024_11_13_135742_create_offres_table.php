@@ -16,25 +16,27 @@ return new class extends Migration
             $table->decimal('salaire', 10, 2)->nullable();
             $table->enum('type', ['stage', 'alternance', 'CDD', 'CDI']);
             $table->boolean('est_ouverte')->default(true);
-            $table->foreignId('entreprise_id')->constrained();
+            $table->foreignId('entreprise_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->comment('Auteur de l\'offre');
             $table->timestamps();
         });
 
         Schema::create('formation_offre', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('formation_id')->constrained();
+            $table->foreignId('formation_id')->constrained()->onDelete('cascade');
             $table->foreignId('offre_id')->constrained()->onDelete('cascade');
+            $table->unique(['formation_id', 'offre_id']);
             $table->timestamps();
         });
 
         Schema::create('candidatures', function (Blueprint $table) {
             $table->id();
             $table->foreignId('offre_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('motivation');
             $table->boolean('est_visible')->default(true);
             $table->timestamps();
+            $table->unique(['offre_id', 'user_id']);
         });
     }
 
@@ -45,3 +47,4 @@ return new class extends Migration
         Schema::dropIfExists('offres');
     }
 };
+
