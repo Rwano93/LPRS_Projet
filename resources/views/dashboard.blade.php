@@ -11,7 +11,7 @@
                 </a>
             </div>
         </section>
-        
+        &nbsp;&nbsp;&nbsp;
         <div class="bg-gradient-to-b from-gray-900 to-transparent h-32"></div>
 
         <!-- Main Content -->
@@ -29,10 +29,10 @@
                         <p>{{ session('status') }}</p>
                     </div>
                 @endif
-
+                &nbsp;&nbsp;&nbsp;
             <!-- Actualités et Événements -->
             <section class="mb-16">
-                <div class="flex justify-between items-center mb-8">
+                <div class="flex justify-center items-center mb-8">
                     <h2 class="text-3xl font-semibold text-gray-900">Actualités et Événements</h2>
                 </div>
                 <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -90,10 +90,10 @@
                     @endforelse
                 </div>
             </section>
-
+            &nbsp;&nbsp;&nbsp;
             <!-- Offres d'emploi -->
             <section class="mb-16">
-                <h2 class="text-3xl font-semibold text-gray-900 mb-8">Offres d'emploi récentes</h2>
+                <h2 class="text-3xl font-semibold text-gray-900 mb-8 text-center">Offres d'emploi récentes</h2>
                 <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                     @forelse($offres as $offre)
                         <div class="bg-white rounded-xl shadow-lg overflow-hidden transition duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-xl flex flex-col">
@@ -146,7 +146,7 @@
             </section>
             </div>
         </main>
-        
+        &nbsp;&nbsp;&nbsp;
         <!-- Call to Action Section -->
         <section class="bg-gradient-to-r from-indigo-600 to-purple-700 py-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
