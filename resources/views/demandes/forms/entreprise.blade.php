@@ -4,7 +4,7 @@
             <div class="bg-white shadow-xl rounded-lg overflow-hidden">
                 <div class="p-8">
                     <h2 class="text-3xl font-semibold text-gray-800 mb-6">
-                        Demande de changement de statut - Entreprise
+                        Demande de changement de statut - Partenaire
                     </h2>
 
                     <form action="{{ route('demandes.store') }}" method="POST" class="space-y-6">
@@ -25,13 +25,12 @@
 
                         <div>
                             <label for="code_postal" class="block text-sm font-medium text-gray-700">Code postal</label>
-                            <input type="text" name="code_postal" id="code_postal" required
+                            <input type="text" name="code_postal" id="code_postal" required pattern="[0-9]{5}"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
 
                         <div>
-                            <label for="ville" class="block text-sm font-medium
-text-gray-700">Ville</label>
+                            <label for="ville" class="block text-sm font-medium text-gray-700">Ville</label>
                             <input type="text" name="ville" id="ville" required
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
@@ -45,6 +44,18 @@ text-gray-700">Ville</label>
                         <div>
                             <label for="site_web" class="block text-sm font-medium text-gray-700">Site web</label>
                             <input type="url" name="site_web" id="site_web" required
+                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+
+                        <div>
+                            <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
+                            <input type="tel" name="telephone" id="telephone" required pattern="[0-9]{10}"
+                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+
+                        <div>
+                            <label for="poste" class="block text-sm font-medium text-gray-700">Votre poste dans l'entreprise</label>
+                            <input type="text" name="poste" id="poste" required
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
 

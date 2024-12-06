@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
-            $table->enum('type_demande', ['etudiant', 'professeur', 'alumni', 'entreprise']);
+            $table->enum('type_demande', ['etudiant', 'professeur', 'alumni', 'partenaire']);
             $table->enum('statut', ['en_attente', 'approuve', 'rejete'])->default('en_attente');
             $table->text('message');
             $table->string('cv')->nullable();
@@ -22,10 +22,11 @@ return new class extends Migration
             $table->string('entreprise')->nullable();
             $table->string('poste')->nullable();
             $table->string('adresse')->nullable();
-            $table->string('code_postal')->nullable();
+            $table->string('code_postal', 5)->nullable();
             $table->string('ville')->nullable();
             $table->string('secteur_activite')->nullable();
             $table->string('site_web')->nullable();
+            $table->string('telephone')->nullable();
             $table->timestamps();
         });
     }
@@ -35,4 +36,3 @@ return new class extends Migration
         Schema::dropIfExists('demande_changement_statuts');
     }
 };
-

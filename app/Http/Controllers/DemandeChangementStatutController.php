@@ -6,6 +6,7 @@ use App\Models\DemandeChangementStatut;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Formation;
+use App\Models\Entreprise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -145,6 +146,8 @@ class DemandeChangementStatutController extends Controller
             Log::warning('Pas de fichier CV ou fichier invalide');
         }
 
+        DB::beginTransaction();
+
         try {
             $demande = DemandeChangementStatut::create([
                 'user_id' => Auth::id(),
@@ -158,25 +161,39 @@ class DemandeChangementStatutController extends Controller
                 'annee_diplome' => $request->annee_diplome ?? null,
                 'entreprise' => $request->nom_entreprise ?? null,
                 'poste' => $request->poste ?? null,
+                'adresse' => $request->adresse ?? null,
+                'code_postal' => $request->code_postal ?? null,
+                'ville' => $request->ville ?? null,
+                'secteur_activite' => $request->secteur_activite ?? null,
+                'site_web' => $request->site_web ?? null,
+                'telephone' => $request->telephone ?? null,
             ]);
 
-            // For Entreprise role, save additional details
-            if ($this->getTypeDemande($request) === 'entreprise') {
-                $demande->update([
-                    'entreprise' => $request->nom_entreprise,
-                    // You might want to add these fields to your migration if they don't exist
-                    // 'adresse' => $request->adresse,
-                    // 'code_postal' => $request->code_postal,
-                    // 'ville' => $request->ville,
-                    // 'secteur_activite' => $request->secteur_activite,
-                    // 'site_web' => $request->site_web,
+            // For Entreprise role, create an entry in the entreprises table
+            if ($this->getTypeDemande($request) === 'partenaire') {
+                $entreprise = Entreprise::create([
+                    'nom' => $request->nom_entreprise,
+                    'adresse' => $request->adresse,
+                    'code_postal' => $request->code_postal,
+                    'ville' => $request->ville,
+                    'telephone' => $request->telephone,
+                    'site_web' => $request->site_web,
+                ]);
+
+                // Create the pivot table entry
+                $entreprise->users()->attach(Auth::id(), [
+                    'poste' => $request->poste,
+                    'motif_inscription' => $request->message,
                 ]);
             }
+
+            DB::commit();
 
             Log::info('Demande créée', ['demande' => $demande]);
 
             return redirect()->route('demandes.index')->with('success', 'Votre demande a été soumise avec succès.');
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Erreur lors de la création de la demande', ['error' => $e->getMessage()]);
             return back()->with('error', 'Une erreur est survenue lors de la soumission de votre demande.')->withInput();
         }
@@ -185,7 +202,7 @@ class DemandeChangementStatutController extends Controller
     private function getTypeDemande(Request $request)
     {
         $role = Role::findOrFail($request->role_id);
-        return strtolower($role->libelle);
+        return strtolower($role->libelle) === 'entreprise' ? 'partenaire' : strtolower($role->libelle);
     }
 
     private function validateDemande(Request $request)
@@ -215,10 +232,12 @@ class DemandeChangementStatutController extends Controller
             case 'Entreprise':
                 $rules['nom_entreprise'] = 'required|string';
                 $rules['adresse'] = 'required|string';
-                $rules['code_postal'] = 'required|string';
+                $rules['code_postal'] = 'required|string|size:5';
                 $rules['ville'] = 'required|string';
                 $rules['secteur_activite'] = 'required|string';
                 $rules['site_web'] = 'required|url';
+                $rules['telephone'] = 'required|string|size:10';
+                $rules['poste'] = 'required|string';
                 break;
         }
 
@@ -231,4 +250,3 @@ class DemandeChangementStatutController extends Controller
         return view('gestionnaire.dashboard', compact('demandes'));
     }
 }
-
