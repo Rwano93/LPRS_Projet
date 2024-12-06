@@ -87,7 +87,15 @@ Gérer l'espace client/evenements/forum/offres de stages pour les étudiants etc
  ```bash
  composer require spatie/laravel-permission
  ```
-
+11: Besoin impératif de l'envoie de message contact (dans le .env).
+```bash
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=31ef4a223ff5fe
+MAIL_PASSWORD=d363d56c4b6855
+MAIL_ENCRYPTION=tls
+```
 ## Configuration
 
 - Configure les paramètres de la base de données dans le fichier `.env`.
