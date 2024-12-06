@@ -70,14 +70,21 @@ Gérer l'espace client/evenements/forum/offres de stages pour les étudiants etc
    ```
 
 7. Configure la base de données et d'autres paramètres dans le fichier `.env`.
-
-8. Exécute les migrations :
+   ```bash
+    MAIL_MAILER=smtp
+    MAIL_HOST=sandbox.smtp.mailtrap.io
+    MAIL_PORT=2525
+    MAIL_USERNAME=31ef4a223ff5fe
+    MAIL_PASSWORD=d363d56c4b6855
+    MAIL_EN
+    ```
+9. Exécute les migrations :
 
    ```bash
    php artisan migrate
    ```
 
-9. (Facultatif) Si tu utilises Jetstream avec des fonctionnalités supplémentaires (comme la gestion des équipes), n'oublie pas de publier les fichiers de configuration :
+10. (Facultatif) Si tu utilises Jetstream avec des fonctionnalités supplémentaires (comme la gestion des équipes), n'oublie pas de publier les fichiers de configuration :
 
    ```bash
    php artisan jetstream:install livewire
@@ -87,7 +94,6 @@ Gérer l'espace client/evenements/forum/offres de stages pour les étudiants etc
  ```bash
  composer require spatie/laravel-permission
  ```
-
 ## Configuration
 
 - Configure les paramètres de la base de données dans le fichier `.env`.
