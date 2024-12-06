@@ -42,6 +42,57 @@
                                 <span class="font-semibold text-yellow-500">{{ ucfirst($demande->statut) }}</span>
                             </dd>
                         </div>
+                        
+                        @if($demande->type_demande === 'etudiant')
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500">Niveau d'étude :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $demande->niveau_etude }}</dd>
+                            </div>
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500">Filière :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $demande->filiere }}</dd>
+                            </div>
+                        @elseif($demande->type_demande === 'alumni')
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500">Année d'obtention du diplôme :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $demande->annee_diplome }}</dd>
+                            </div>
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500">Emploi actuel :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $demande->emploi_actuel }}</dd>
+                            </div>
+                        @elseif($demande->type_demande === 'partenaire')
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500">Nom de l'entreprise :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $demande->entreprise }}</dd>
+                            </div>
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500">Secteur d'activité :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $demande->secteur_activite }}</dd>
+                            </div>
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500">Téléphone :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $demande->telephone }}</dd>
+                            </div>
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500">Site web :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    <a href="{{ $demande->site_web }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">{{ $demande->site_web }}</a>
+                                </dd>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <dt class="text-sm font-medium text-gray-500">Adresse :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    {{ $demande->adresse }}, {{ $demande->code_postal }} {{ $demande->ville }}
+                                </dd>
+                            </div>
+                        @elseif($demande->type_demande === 'professeur')
+                            <div class="sm:col-span-1">
+                                <dt class="text-sm font-medium text-gray-500">Formation :</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $demande->formation->nom }}</dd>
+                            </div>
+                        @endif
+                        
                         <div class="sm:col-span-2">
                             <dt class="text-sm font-medium text-gray-500">Message de motivation :</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $demande->message }}</dd>
@@ -99,3 +150,4 @@
         </div>
     @endif
 </x-app-layout>
+

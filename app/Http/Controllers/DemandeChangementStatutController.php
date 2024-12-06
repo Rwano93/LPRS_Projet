@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\NiveauEtude;
 
 class DemandeChangementStatutController extends Controller
 {
@@ -21,7 +20,7 @@ class DemandeChangementStatutController extends Controller
 
         if ($user->role->libelle === 'Gestionnaire') {
             $demandes = DemandeChangementStatut::with(['user', 'role'])->latest()->paginate(10);
-            return view('gestionnaire.demandes.index', compact('demandes'));
+            return view('demandes.gestionnaire-index', compact('demandes'));
         } else {
             $demandes = DemandeChangementStatut::where('user_id', $user->id)->latest()->get();
             return view('demandes.index', compact('roles', 'demandes'));
@@ -110,8 +109,7 @@ class DemandeChangementStatutController extends Controller
     public function createEtudiant()
     {
         $role = Role::where('libelle', 'Etudiant')->firstOrFail();
-        $niveauxEtude = NiveauEtude::all(); 
-        return view('demandes.forms.etudiant', compact('role', 'niveauxEtude'));
+        return view('demandes.forms.etudiant', compact('role'));
     }
 
     public function createProfesseur()
@@ -146,6 +144,7 @@ class DemandeChangementStatutController extends Controller
         } else {
             Log::warning('Pas de fichier CV ou fichier invalide');
         }
+
         try {
             $demande = DemandeChangementStatut::create([
                 'user_id' => Auth::id(),
@@ -160,7 +159,19 @@ class DemandeChangementStatutController extends Controller
                 'entreprise' => $request->nom_entreprise ?? null,
                 'poste' => $request->poste ?? null,
             ]);
-            
+
+            // For Entreprise role, save additional details
+            if ($this->getTypeDemande($request) === 'entreprise') {
+                $demande->update([
+                    'entreprise' => $request->nom_entreprise,
+                    // You might want to add these fields to your migration if they don't exist
+                    // 'adresse' => $request->adresse,
+                    // 'code_postal' => $request->code_postal,
+                    // 'ville' => $request->ville,
+                    // 'secteur_activite' => $request->secteur_activite,
+                    // 'site_web' => $request->site_web,
+                ]);
+            }
 
             Log::info('Demande créée', ['demande' => $demande]);
 
@@ -220,3 +231,4 @@ class DemandeChangementStatutController extends Controller
         return view('gestionnaire.dashboard', compact('demandes'));
     }
 }
+
