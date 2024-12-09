@@ -76,7 +76,8 @@ Gérer l'espace client/evenements/forum/offres de stages pour les étudiants etc
     MAIL_PORT=2525
     MAIL_USERNAME=31ef4a223ff5fe
     MAIL_PASSWORD=d363d56c4b6855
-    MAIL_EN
+    MAIL_ENCRYPTION=tls
+    
     ```
 9. Exécute les migrations :
 
