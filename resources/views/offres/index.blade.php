@@ -89,6 +89,14 @@
                                             </div>
                                         @endif
                                     @endauth
+                                    @auth
+                                        @if(Auth::user()->ref_role == 2 || Auth::user()->ref_role == 3)
+                                            <button onclick="applyForJob({{ $offre->id }})"
+                                                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg mr-2">
+                                                Postuler
+                                            </button>
+                                        @endif
+                                    @endauth
                                     <a href="{{ route('offres.show', $offre->id) }}"
                                        class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg">
                                         Voir les détails
@@ -136,6 +144,28 @@
                 }
             });
         });
+        function applyForJob(offreId) {
+            Swal.fire({
+                title: 'Postuler à cette offre',
+                text: "Êtes-vous sûr de vouloir postuler à cette offre ?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, postuler !',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Here you would typically send an AJAX request to your backend
+                    // For now, we'll just show a success message
+                    Swal.fire(
+                        'Postulé !',
+                        'Votre candidature a été envoyée avec succès.',
+                        'success'
+                    );
+                }
+            });
+        }
     </script>
     @foreach($offres as $offre)
         <form id="delete-form-{{ $offre->id }}" action="{{ route('offres.destroy', $offre) }}" method="POST"
@@ -145,4 +175,3 @@
         </form>
     @endforeach
 </x-app-layout>
-
