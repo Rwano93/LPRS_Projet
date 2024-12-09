@@ -104,6 +104,11 @@ Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
     Route::post('/gestionnaire/demandes/{demande}/rejeter', [GestionnaireController::class, 'rejeterDemande'])->name('gestionnaire.demandes.rejeter');
     Route::get('/gestionnaire/statistiques', [GestionnaireController::class, 'statistiques'])->name('gestionnaire.statistiques');
 });
+Route::middleware(['role:Etudiant'])->group(function () {
+    Route::get('/forum', [ForumController::class, 'index'])->name('forum.index');
+    Route::get('/forum/{id}', [ForumController::class, 'show'])->name('forum.show');
+    Route::post('/forum/{id}/reply', [ReplyController::class, 'store'])->name('replies.store');
+});
 
 
 
