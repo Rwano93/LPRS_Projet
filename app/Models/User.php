@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -23,6 +26,8 @@ class User extends Authenticatable
         'email',
         'password',
         'ref_role',
+        'profile_photo_path',
+        'cv',
     ];
 
     protected $hidden = [
@@ -38,7 +43,61 @@ class User extends Authenticatable
 
     protected $appends = [
         'profile_photo_url',
+        'cv_url',
     ];
+
+    /**
+     * Get the URL to the user's profile photo.
+     *
+     * @return string
+     */
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->profile_photo_path) {
+            // Ensure the path is properly encoded
+            $path = str_replace('\\', '/', $this->profile_photo_path);
+            return Storage::disk($this->profilePhotoDisk())->url($path);
+        }
+
+        return $this->defaultProfilePhotoUrl();
+    }
+
+    /**
+     * Update the user's profile photo.
+     *
+     * @param  \Illuminate\Http\UploadedFile  $photo
+     * @return void
+     */
+    public function updateProfilePhoto($photo)
+    {
+        tap($this->profile_photo_path, function ($previous) use ($photo) {
+            // Generate a safe filename
+            $filename = Str::random(40) . '.' . $photo->getClientOriginalExtension();
+            
+            $this->forceFill([
+                'profile_photo_path' => $photo->storeAs(
+                    'profile-photos',
+                    $filename,
+                    ['disk' => $this->profilePhotoDisk()]
+                ),
+            ])->save();
+
+            if ($previous) {
+                Storage::disk($this->profilePhotoDisk())->delete($previous);
+            }
+        });
+    }
+
+    /**
+     * Get the default profile photo URL if no profile photo has been uploaded.
+     *
+     * @return string
+     */
+    protected function defaultProfilePhotoUrl()
+    {
+        $name = trim(collect([$this->nom, $this->prenom])->filter()->join(' '));
+        return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=7F9CF5&background=EBF4FF';
+    }
 
     public function role()
     {
@@ -65,11 +124,16 @@ class User extends Authenticatable
         return $this->hasOne(Professeur::class, 'ref_user');
     }
 
-    public function entreprises()
+    public function entreprises(): BelongsToMany
     {
         return $this->belongsToMany(Entreprise::class, 'entreprise_user')
-            ->withPivot('poste')
-            ->withTimestamps();
+                    ->withPivot('poste', 'motif_inscription')
+                    ->withTimestamps();
+    }
+
+    public function candidatures()
+    {
+        return $this->hasMany(Candidature::class);
     }
 
     public function getProfileAttribute()
@@ -87,4 +151,10 @@ class User extends Authenticatable
                 return null;
         }
     }
+
+    public function getCvUrlAttribute()
+    {
+        return $this->cv ? Storage::url($this->cv) : null;
+    }
 }
+

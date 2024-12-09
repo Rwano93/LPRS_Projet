@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\OffreMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\EvenementAvantController;
@@ -14,11 +15,14 @@ use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\ActiviteController;
 use App\Http\Controllers\AccueilController;
+use App\Http\Controllers\FileController;
+use App\Mail\HelloMail;
+
 
 Route::get('/', [AccueilController::class, 'index'])->name('dashboard');
 
 //Route::resource('evenement', EvenementController::class); // Commencez pas a toucher bettement...
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', OffreMiddleware::class])->group(function () {
     Route::get('/evenements', [EvenementController::class, 'index'])->name('evenement.index');
     Route::get('/evenements/create', [EvenementController::class, 'create'])->name('evenement.create');
     Route::post('/evenements', [EvenementController::class, 'store'])->name('evenement.store');
@@ -30,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/evenements/{evenement}/desinscription', [EvenementController::class, 'desinscription'])->name('evenement.desinscription');
     Route::get('/evenements/{evenement}/inscrits', [EvenementController::class, 'inscrits'])->name('evenement.inscrits');
     Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])->name('evenement.removeUserFromEvent');
+    
 });
 Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])
     ->name('evenement.removeUserFromEvent');
@@ -52,8 +57,6 @@ Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store
 Route::resource('discussions', DiscussionController::class);
 Route::get('/discussions', [DiscussionController::class, 'index'])->name('discussion.index');
 
-Route::get('/', [EvenementAvantController::class, 'index'])->name('home');
-Route::get('/dashboard', [EvenementAvantController::class, 'index'])->name('dashboard');
 
 // Routes pour les actualités
 Route::middleware(['auth'])->group(function () {
@@ -66,13 +69,14 @@ Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
 });
 
 // Routes pour le contact
-Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::get('/contact', [ContactController::class, 'showForm'])->name('contact.show');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
-Route::get('/contact/confirmation', [ContactController::class, 'confirmation'])->name('contact.confirmation');
+Route::get('/contact/success', [ContactController::class, 'success'])->name('contact.success');
+
 
 // Routes pour les offres d'emploi
+Route::middleware(['auth', OffreMiddleware::class])->group(function () {
 Route::resource('offres', OffreController::class);
-Route::middleware(['auth'])->group(function () {
     Route::get('/offres', [OffreController::class, 'index'])->name('offres.index');
     Route::post('/offres', [OffreController::class, 'store'])->name('offres.store');
     Route::put('/offres/{offre}', [OffreController::class, 'update'])->name('offres.update');
@@ -89,11 +93,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/demandes', [DemandeChangementStatutController::class, 'store'])->name('demandes.store');
 });
 
-Route::middleware(['auth', 'role:gestionnaire'])->group(function () {
-    Route::get('/gestionnaire/dashboard', [DemandeChangementStatutController::class, 'gestionnaireDashboard'])->name('gestionnaire.dashboard');
-    Route::post('/demandes/{demande}/approuver', [DemandeChangementStatutController::class, 'approuver'])->name('gestionnaire.demandes.approuver');
-    Route::post('/demandes/{demande}/rejeter', [DemandeChangementStatutController::class, 'rejeter'])->name('gestionnaire.demandes.rejeter');
-});
 
 // Routes pour le gestionnaire
 Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
@@ -110,7 +109,7 @@ Route::middleware(['role:Etudiant'])->group(function () {
     Route::post('/forum/{id}/reply', [ReplyController::class, 'store'])->name('replies.store');
 });
 
-
+Route::get('cv/{filename}', [FileController::class, 'serveFile'])->name('serve.cv');
 
 // Route pour le tableau de bord
 Route::middleware([
@@ -118,7 +117,6 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AccueilController::class, 'index'])->name('dashboard');
+
 });

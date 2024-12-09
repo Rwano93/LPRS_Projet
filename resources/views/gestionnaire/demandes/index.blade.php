@@ -8,7 +8,7 @@
     <div class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-2xl rounded-lg overflow-hidden">
-                <div class="p-6 bg-gradient-to-r from-teal-100 via-blue-50 to-teal-100 border-b border-gray-200">
+                <div class="p-6 bg-gradient-to-r bg-gray-100 border-b border-gray-200">
                     <h3 class="text-3xl font-semibold text-gray-800 mb-6">Demandes en attente</h3>
 
                     <!-- Barre de recherche et filtre par statut -->

@@ -13,11 +13,16 @@ class Offre extends Model
         'titre',
         'description',
         'missions',
-        'type',
         'salaire',
+        'type',
+        'est_ouverte',
         'entreprise_id',
         'user_id',
-        'est_ouverte'
+    ];
+
+    protected $casts = [
+        'est_ouverte' => 'boolean',
+        'salaire' => 'decimal:2',
     ];
 
     public function entreprise()
@@ -29,8 +34,20 @@ class Offre extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function formations()
+    {
+        return $this->belongsToMany(Formation::class, 'formation_offre');
+    }
+
+    public function candidatures()
+    {
+        return $this->hasMany(Candidature::class);
+    }
+
     public function offreAvant()
     {
         return $this->hasOne(OffreAvant::class, 'ref_offre');
     }
 }
+

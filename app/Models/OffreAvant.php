@@ -9,13 +9,15 @@ class OffreAvant extends Model
 {
     use HasFactory;
 
-    protected $table = 'offreavant'; // Assurez-vous que le nom de la table est correct
+    protected $table = 'offreavant';
 
-    protected $fillable = ['ref_offre'];
+    protected $fillable = [
+        'ref_offre',
+    ];
 
     public function offre()
     {
-        return $this->belongsTo(Offre::class, 'ref_offre'); // Relation avec la table offres
+        return $this->belongsTo(Offre::class, 'ref_offre');
     }
 }
 

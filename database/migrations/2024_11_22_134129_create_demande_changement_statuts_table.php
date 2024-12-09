@@ -21,6 +21,12 @@ return new class extends Migration
             $table->integer('annee_diplome')->nullable();
             $table->string('entreprise')->nullable();
             $table->string('poste')->nullable();
+            $table->string('adresse')->nullable();
+            $table->string('code_postal', 5)->nullable();
+            $table->string('ville')->nullable();
+            $table->string('secteur_activite')->nullable();
+            $table->string('site_web')->nullable();
+            $table->string('telephone')->nullable();
             $table->timestamps();
         });
     }

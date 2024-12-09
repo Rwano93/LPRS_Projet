@@ -2,64 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contact;
+use App\Mail\HelloMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ContactFormMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class ContactController extends Controller
 {
-    /**
-     * Show the contact form.
-     *
-     * @return View
-     */
-    public function show(): View
+    public function showForm()
     {
         return view('contact.formulaire');
     }
 
-    /**
-     * Handle the contact form submission.
-     *
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function submit(Request $request): RedirectResponse
+    public function submit(Request $request)
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|string|email|max:255',
             'sujet' => 'required|string|max:255',
             'message' => 'required|string',
         ]);
 
-        $contact = Contact::create($validated);
+        Mail::to('lprs.projet24@gmail.com')->send(new HelloMail($validated));
 
-        try {
-            Mail::to(config('mail.admin_address'))->send(new ContactFormMail($contact));
-            Log::info('E-mail envoyé avec succès', ['contact_id' => $contact->id]);
-        } catch (\Exception $e) {
-            Log::error('Erreur lors de l\'envoi de l\'e-mail', [
-                'erreur' => $e->getMessage(),
-                'contact_id' => $contact->id
-            ]);
-            return redirect()->route('contact.show')->with('error', 'Une erreur est survenue lors de l\'envoi de votre message. Veuillez réessayer plus tard.');
-        }
-
-        return redirect()->route('contact.confirmation')->with('status', 'Votre message a été envoyé avec succès !');
+        return redirect()->route('contact.success');
     }
 
-    /**
-     * Show the confirmation page after sending the message.
-     *
-     * @return View
-     */
-    public function confirmation(): View
+    public function success()
     {
-        return view('contact.confirmation');
+        return view('contact.success');
     }
 }
+

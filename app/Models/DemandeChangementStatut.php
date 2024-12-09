@@ -18,6 +18,12 @@ class DemandeChangementStatut extends Model
         'annee_diplome',
         'entreprise',
         'poste',
+        'adresse',
+        'code_postal',
+        'ville',
+        'secteur_activite',
+        'site_web',
+        'telephone',
     ];
 
     public function user()
