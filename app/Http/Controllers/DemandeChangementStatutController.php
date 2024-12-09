@@ -21,7 +21,7 @@ class DemandeChangementStatutController extends Controller
 
         if ($user->role->libelle === 'Gestionnaire') {
             $demandes = DemandeChangementStatut::with(['user', 'role'])->latest()->paginate(10);
-            return view('demandes.gestionnaire-index', compact('demandes'));
+            return view('gestionnaire.demandes .index', compact('demandes'));
         } else {
             $demandes = DemandeChangementStatut::where('user_id', $user->id)->latest()->get();
             return view('demandes.index', compact('roles', 'demandes'));

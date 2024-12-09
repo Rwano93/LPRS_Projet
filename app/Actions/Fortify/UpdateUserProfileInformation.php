@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
@@ -24,6 +25,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
+            'cv' => ['nullable', 'file', 'mimes:pdf', 'max:5120'], // Allow PDF files up to 5MB
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {
@@ -41,6 +43,14 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 ]);
                 throw $e;
             }
+        }
+
+        if (isset($input['cv'])) {
+            $this->updateCV($user, $input['cv']);
+        }
+
+        if (isset($input['delete_cv']) && $input['delete_cv'] === true) {
+            $this->deleteCV($user);
         }
 
         if ($input['email'] !== $user->email &&
@@ -72,6 +82,52 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         ])->save();
 
         $user->sendEmailVerificationNotification();
+    }
+
+    /**
+     * Update the user's CV.
+     *
+     * @param  mixed  $user
+     * @param  \Illuminate\Http\UploadedFile  $cv
+     * @return void
+     */
+    protected function updateCV($user, $cv)
+    {
+        $path = $cv->store('cvs', 'public');
+
+        if ($user->cv) {
+            Storage::disk('public')->delete($user->cv);
+        }
+
+        $user->forceFill([
+            'cv' => $path,
+        ])->save();
+
+        Log::info('CV updated successfully', [
+            'user_id' => $user->id,
+            'cv_path' => $path,
+        ]);
+    }
+
+    /**
+     * Delete the user's CV.
+     *
+     * @param  mixed  $user
+     * @return void
+     */
+    protected function deleteCV($user)
+    {
+        if ($user->cv) {
+            Storage::disk('public')->delete($user->cv);
+            
+            $user->forceFill([
+                'cv' => null,
+            ])->save();
+
+            Log::info('CV deleted successfully', [
+                'user_id' => $user->id,
+            ]);
+        }
     }
 }
 

@@ -17,6 +17,8 @@ use App\Http\Controllers\ActiviteController;
 use App\Http\Controllers\AccueilController;
 use App\Http\Controllers\FileController;
 use App\Mail\HelloMail;
+use App\Http\Middleware\EntrepriseAlumni;
+use App\Http\Controllers\EntrepriseController;
 
 
 Route::get('/', [AccueilController::class, 'index'])->name('dashboard');
@@ -103,6 +105,17 @@ Route::middleware(['auth', GestionnaireMiddleware::class])->group(function () {
     Route::post('/gestionnaire/demandes/{demande}/rejeter', [GestionnaireController::class, 'rejeterDemande'])->name('gestionnaire.demandes.rejeter');
     Route::get('/gestionnaire/statistiques', [GestionnaireController::class, 'statistiques'])->name('gestionnaire.statistiques');
 });
+
+Route::middleware(['auth', EntrepriseAlumni::class])->group(function () {
+    Route::resource('entreprises', EntrepriseController::class);
+    Route::post('/entreprises/{entreprise}/request-link', [EntrepriseController::class, 'requestLink'])->name('entreprises.request-link');
+    Route::patch('/entreprises/verify-link/{pivotId}', [EntrepriseController::class, 'verifyLink'])->name('entreprises.verify-link');
+    Route::patch('/entreprises/{entreprise}/approve-partnership', [EntrepriseController::class, 'approvePartnership'])->name('entreprises.approve-partnership');
+    Route::patch('/entreprises/{entreprise}/reject-partnership', [EntrepriseController::class, 'rejectPartnership'])->name('entreprises.reject-partnership');
+
+
+});
+    
 
 Route::get('cv/{filename}', [FileController::class, 'serveFile'])->name('serve.cv');
 

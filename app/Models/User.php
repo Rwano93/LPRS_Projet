@@ -124,13 +124,17 @@ class User extends Authenticatable
         return $this->hasOne(Professeur::class, 'ref_user');
     }
 
-    public function entreprises(): BelongsToMany
+    public function entreprises()
     {
         return $this->belongsToMany(Entreprise::class, 'entreprise_user')
-                    ->withPivot('poste', 'motif_inscription')
+                    ->withPivot('poste', 'is_verified', 'verified_at', 'verified_by')
                     ->withTimestamps();
     }
 
+    public function createdEnterprises()
+    {
+        return $this->hasMany(Entreprise::class, 'created_by');
+    }
     public function candidatures()
     {
         return $this->hasMany(Candidature::class);
@@ -152,9 +156,23 @@ class User extends Authenticatable
         }
     }
 
+    public function updateCV($cv)
+        {
+            tap($this->cv, function ($previous) use ($cv) {
+                $filename = Str::random(40) . '.' . $cv->getClientOriginalExtension();
+
+                $this->forceFill([
+                    'cv' => $cv->storeAs('cvs', $filename, ['disk' => 'public']),
+                ])->save();
+
+                if ($previous) {
+                    Storage::disk('public')->delete($previous);
+                }
+            });
+        }
+
     public function getCvUrlAttribute()
     {
-        return $this->cv ? Storage::url($this->cv) : null;
+        return $this->cv ? Storage::disk('public')->url($this->cv) : null;
     }
 }
-

@@ -11,8 +11,12 @@ use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
+    protected $policies = [
+        Entreprise::class => EntreprisePolicy::class,
+    ];
     public function boot()
     {
+
         Schema::defaultStringLength(191);
         View::composer('*', function ($view) {
             if (Auth::check() && Auth::user()->ref_role == 6) {
@@ -21,7 +25,10 @@ class AppServiceProvider extends ServiceProvider
             }
         });
         Paginator::useBootstrap();
+        
+
     }
+    
 
     
 }

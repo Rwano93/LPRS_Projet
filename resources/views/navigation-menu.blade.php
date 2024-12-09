@@ -210,7 +210,7 @@
                                     {{ __('Panel Utilisateurs') }}
                                 </x-dropdown-link>
                                 @endif
-                                @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 4)
+                                @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 5 || Auth::user()->ref_role == 6)
                                 <x-dropdown-link href="{{ route('entreprises.index') }}" :active="request()->routeIs('entreprises.index')">
                                     {{ __('Panel Entreprises') }}
                                 </x-dropdown-link>

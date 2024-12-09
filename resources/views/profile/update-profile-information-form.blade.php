@@ -72,7 +72,7 @@
         </div>
 
       <!-- CV -->
-        <div x-data="{ cvName: '{{ $cvName ?? 'Aucun fichier choisi' }}' }" class="col-span-6 sm:col-span-4">
+        <div x-data="{ cvName: null }" class="col-span-6 sm:col-span-4">
             <x-label for="cv" value="{{ __('CV') }}" />
             <div class="mt-1 flex items-center">
                 <x-button type="button" x-on:click.prevent="$refs.cvInput.click()">
@@ -80,7 +80,7 @@
                 </x-button>
                 <span x-text="cvName" class="ml-3 text-sm text-gray-600"></span>
             </div>
-            <input type="file" id="cv" x-ref="cvInput" wire:model="cv" class="hidden" x-on:change="cvName = $refs.cvInput.files[0].name" accept=".pdf" />
+            <input type="file" id="cv" x-ref="cvInput" wire:model="cv" class="hidden" x-on:change="cvName = $event.target.files[0].name" accept=".pdf" />
             <x-input-error for="cv" class="mt-2" />
             @if($this->user->cv)
                 <div class="mt-2">
@@ -93,6 +93,8 @@
                 </div>
             @endif
         </div>
+
+
     </x-slot>
 
     <x-slot name="actions">
