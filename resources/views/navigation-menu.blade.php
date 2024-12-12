@@ -182,7 +182,7 @@
                                 <x-dropdown-link href="{{ route('profile.show') }}">
                                     {{ __('Profile') }}
                                 </x-dropdown-link>
- 
+
                                 @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                                     <x-dropdown-link href="{{ route('api-tokens.index') }}">
                                         {{ __('API Tokens') }}
@@ -204,17 +204,27 @@
                                         {{ __('Demande de changement de statut') }}
                                     </x-dropdown-link>
                                 @endif
-
+                                @if(Auth::user()->ref_role == 4)
+                                    @php
+                                        $pendingRequestsCount = app(App\Http\Controllers\EvenementController::class)->getPendingEventRequestsCount();
+                                    @endphp
+                                    <x-nav-link href="{{ route('approbation.demandes') }}" :active="request()->routeIs('approbation.demandes')">
+                                        <div class="flex items-center">
+                                            {{ __('Approbation des demandes evenements') }}
+                                            @if($pendingRequestsCount > 0)
+                                                <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                                                    {{ $pendingRequestsCount }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </x-nav-link>
+                                @endif
                                 @if(Auth::user()->ref_role == 6)
                                 <x-dropdown-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
                                     {{ __('Panel Utilisateurs') }}
                                 </x-dropdown-link>
                                 @endif   
-                                @if(Auth::user()->ref_role == 4)
-                                    <x-nav-link href="{{ route('approbation.demandes') }}" :active="request()->routeIs('approbation.demandes')">
-                                        {{ __('Demandes d\'approbation') }}
-                                    </x-nav-link>
-                                @endif
+                
                                 @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 5 || Auth::user()->ref_role == 6)
                                 <x-dropdown-link href="{{ route('entreprises.index') }}" :active="request()->routeIs('entreprises.index')">
                                     {{ __('Panel Entreprises') }}
@@ -302,7 +312,11 @@
                                 {{ __('API Tokens') }}
                             </x-responsive-nav-link>
                         @endif
-
+                        @if(Auth::user()->ref_role == 4)
+                            <x-responsive-nav-link href="{{ route('approbation.demandes') }}" :active="request()->routeIs('approbation.demandes')">
+                                {{ __('Demandes approbation') }}
+                            </x-responsive-nav-link>
+                        @endif
                         @if(Auth::user()->ref_role == 6)
                             <x-responsive-nav-link href="{{ route('gestionnaire.dashboard') }}">
                                 {{ __('Gestion des demandes') }}
@@ -312,11 +326,7 @@
                                 {{ __('Demande de changement de statut') }}
                             </x-responsive-nav-link>
                         @endif
-                        @if(Auth::user()->ref_role == 4)
-                            <x-responsive-nav-link href="{{ route('approbation.demandes') }}" :active="request()->routeIs('approbation.demandes')">
-                                {{ __('Demandes d\'approbation') }}
-                            </x-responsive-nav-link>
-                        @endif
+                        
 
                         <form method="POST" action="{{ route('logout') }}" x-data>
                             @csrf

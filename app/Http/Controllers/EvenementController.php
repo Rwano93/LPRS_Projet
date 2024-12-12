@@ -24,8 +24,14 @@ class EvenementController extends Controller
         foreach ($evenements as $evenement) {
             $evenement->isCreator = $evenement->isUserCreator($userId);
         }
+        
 
         return view('evenements.index', compact('evenements'));
+    }
+
+    public function getPendingEventRequestsCount()
+    {
+        return DemandeEvenement::where('statut', 'en_attente')->count();
     }
 
     public function create()
