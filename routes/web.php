@@ -19,6 +19,9 @@ use App\Http\Controllers\FileController;
 use App\Mail\HelloMail;
 use App\Http\Middleware\EntrepriseAlumni;
 use App\Http\Controllers\EntrepriseController;
+use App\Http\Controllers\ForumController;
+use App\Http\Middleware\ProfesseurMiddleware;
+
 
 
 Route::get('/', [AccueilController::class, 'index'])->name('dashboard');
@@ -38,6 +41,13 @@ Route::middleware(['auth', OffreMiddleware::class])->group(function () {
     Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])->name('evenement.removeUserFromEvent');
     
 });
+Route::middleware(['auth', ProfesseurMiddleware::class])->group(function () {
+    Route::get('/approbation/demandes', [EvenementController::class, 'demandes'])->name('approbation.demandes');
+    Route::patch('/approbation/demandes/{demande}/approuver', [EvenementController::class, 'approuverDemande'])->name('evenement.approuverDemande');
+    Route::patch('/approbation/demandes/{demande}/refuser', [EvenementController::class, 'refuserDemande'])->name('evenement.refuserDemande');
+});
+
+
 Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])
     ->name('evenement.removeUserFromEvent');
 

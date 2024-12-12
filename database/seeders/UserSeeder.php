@@ -29,6 +29,7 @@ class UserSeeder extends Seeder
                 'email' => strtolower($roleName) . '@example.com',
                 'password' => Hash::make('password'),
                 'ref_role' => $role->id,
+                
             ]);
         }
     }

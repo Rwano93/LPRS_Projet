@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\EvenementAvant;
+use App\Models\DemandeEvenement;
+use App\Models\CollaborateurDemande;
 
 class EvenementController extends Controller
 {
@@ -28,34 +30,130 @@ class EvenementController extends Controller
 
     public function create()
     {
-        return view('evenements.create');
+        $professeurs = User::where('ref_role', User::ROLE_PROFESSOR)->get();
+        $collaborateurs = User::where('id', '!=', Auth::id())->get();
+        
+        return view('evenements.create', compact('professeurs', 'collaborateurs'));
     }
+
     public function show(Evenement $evenement)
-{
-    return view('evenements.show', compact('evenement'));
-}
+    {
+        return view('evenements.show', compact('evenement'));
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'titre' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'date' => 'required|date|after:now',
             'adresse' => 'required|string|max:255',
             'type' => 'required|string|max:100',
             'elementrequis' => 'nullable|string',
             'nb_place' => 'required|integer|min:1',
+            'ref_professeur' => Auth::user()->ref_role == User::ROLE_STUDENT ? 'required|exists:users,id,ref_role,' . User::ROLE_PROFESSOR : 'nullable|exists:users,id,ref_role,' . User::ROLE_PROFESSOR,
+            'collaborateurs' => 'nullable|array',
+            'collaborateurs.*' => 'exists:users,id'
         ]);
 
-        $evenement = Evenement::create($validatedData);
+        DB::beginTransaction();
 
-        Organisation::create([
-            'ref_user' => Auth::id(),
-            'ref_evenement' => $evenement->id,
-        ]);
+        try {
+            if (Auth::user()->ref_role == User::ROLE_STUDENT) {
+                $eventRequest = DemandeEvenement::create([
+                    'ref_etudiant' => Auth::id(),
+                    'ref_professeur' => $validatedData['ref_professeur'],
+                    'donnees_evenement' => json_encode($validatedData),
+                    'statut' => 'en_attente',
+                ]);
 
-        return redirect()->route('evenement.index')->with('status', 'Événement créé avec succès !');
+                if (!empty($validatedData['collaborateurs'])) {
+                    foreach ($validatedData['collaborateurs'] as $collaborateurId) {
+                        CollaborateurDemande::create([
+                            'ref_demande_evenement' => $eventRequest->id,
+                            'ref_collaborateur' => $collaborateurId,
+                            'statut' => 'en_attente',
+                        ]);
+                    }
+                }
+
+                DB::commit();
+                return redirect()->route('evenement.index')->with('status', 'Votre demande de création d\'événement a été envoyée pour approbation.');
+            } else {
+                $evenement = Evenement::create([
+                    'ref_createur' => Auth::id(),
+                    'type' => $validatedData['type'],
+                    'titre' => $validatedData['titre'],
+                    'description' => $validatedData['description'],
+                    'date' => $validatedData['date'],
+                    'adresse' => $validatedData['adresse'],
+                    'elementrequis' => $validatedData['elementrequis'],
+                    'nb_place' => $validatedData['nb_place'],
+                ]);
+
+                Organisation::create([
+                    'ref_user' => Auth::id(),
+                    'ref_evenement' => $evenement->id,
+                ]);
+
+                if (!empty($validatedData['collaborateurs'])) {
+                    foreach ($validatedData['collaborateurs'] as $collaborateurId) {
+                        Organisation::create([
+                            'ref_user' => $collaborateurId,
+                            'ref_evenement' => $evenement->id,
+                        ]);
+                    }
+                }
+
+                DB::commit();
+                return redirect()->route('evenement.index')->with('status', 'Événement créé avec succès !');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Une erreur est survenue lors de la création de l\'événement: ' . $e->getMessage())->withInput();
+        }
     }
 
+    public function demandes()
+    {
+        $demandes = DemandeEvenement::with(['etudiant', 'professeur'])
+            ->where('statut', 'en_attente')
+            ->get();
+
+        return view('approbation.demandes', compact('demandes'));
+    }
+
+    public function approuverDemande(DemandeEvenement $demande)
+    {
+        DB::beginTransaction();
+        try {
+            $donnees = json_decode($demande->donnees_evenement, true);
+            $evenement = Evenement::create([
+                'ref_createur' => $demande->ref_etudiant,
+                'type' => $donnees['type'],
+                'titre' => $donnees['titre'],
+                'description' => $donnees['description'],
+                'date' => $donnees['date'],
+                'adresse' => $donnees['adresse'],
+                'elementrequis' => $donnees['elementrequis'] ?? null,
+                'nb_place' => $donnees['nb_place'],
+            ]);
+
+            $demande->update(['statut' => 'approuvee']);
+
+            DB::commit();
+            return redirect()->route('approbation.demandes')->with('status', 'La demande a été approuvée et l\'événement créé.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('approbation.demandes')->with('error', 'Une erreur est survenue lors de l\'approbation de la demande.');
+        }
+    }
+
+    public function refuserDemande(DemandeEvenement $demande)
+    {
+        $demande->update(['statut' => 'refusee']);
+        return redirect()->route('approbation.demandes')->with('status', 'La demande a été refusée.');
+    }
     public function edit(Evenement $evenement)
     {
         return view('evenements.edit', compact('evenement'));

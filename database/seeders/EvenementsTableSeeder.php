@@ -4,21 +4,27 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Evenement;
+use App\Models\User;
+use Faker\Factory as Faker;
 
 class EvenementsTableSeeder extends Seeder
 {
     public function run()
     {
-        $faker = \Faker\Factory::create('fr_FR');
+        $faker = Faker::create();
 
-        for ($i = 0; $i < 15; $i++) {
+        // Get all user IDs
+        $userIds = User::pluck('id')->toArray();
+
+        for ($i = 0; $i < 10; $i++) {
             Evenement::create([
-                'type' => $faker->randomElement(['Conférence', 'Atelier', 'Séminaire', 'Networking']),
+                'ref_createur' => $faker->randomElement($userIds),
+                'type' => $faker->randomElement(['Conférence', 'Atelier', 'Séminaire', 'Webinaire']),
                 'titre' => $faker->sentence,
                 'description' => $faker->paragraphs(3, true),
-                'date' => $faker->dateTimeBetween('now', '+6 months'),
+                'date' => $faker->dateTimeBetween('now', '+1 year'),
                 'adresse' => $faker->address,
-                'elementrequis' => $faker->optional()->sentence,
+                'elementrequis' => $faker->sentence,
                 'nb_place' => $faker->numberBetween(10, 200),
             ]);
         }

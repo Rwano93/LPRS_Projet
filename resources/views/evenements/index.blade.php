@@ -16,7 +16,7 @@
             <div class="flex justify-between items-center mb-8">
                 <h1 class="text-4xl font-bold text-indigo-900">Événements</h1>
                 @auth
-                    @if(Auth::user()->ref_role == 6)
+                    @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 2 || Auth::user()->ref_role == 4 || Auth::user()->ref_role == 5)
                         <a href="{{ route('evenement.create') }}"
                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out flex items-center shadow-md hover:shadow-lg transform hover:-translate-y-1">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">

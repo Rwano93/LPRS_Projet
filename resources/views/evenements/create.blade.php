@@ -56,7 +56,7 @@
                             <div>
                                 <label for="elementrequis" class="block text-sm font-medium text-gray-700">Éléments
                                     requis</label>
-                                <input type="text" name="elementrequis" id="elementrequis" required
+                                <input type="text" name="elementrequis" id="elementrequis"
                                     value="{{ old('elementrequis') }}"
                                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                     placeholder="Ce que les participants doivent apporter">
@@ -78,12 +78,49 @@
                                 <p id="dateError" class="mt-2 text-sm text-red-600 hidden">La date ne peut pas être
                                     antérieure à aujourd'hui.</p>
                             </div>
+
+                            @if(Auth::user()->ref_role == \App\Models\User::ROLE_STUDENT)
+                                <div class="sm:col-span-2">
+                                    <label for="ref_professeur" class="block text-sm font-medium text-gray-700">
+                                        Professeur responsable
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <select name="ref_professeur" id="ref_professeur" required
+                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                        <option value="">Sélectionnez un professeur</option>
+                                        @foreach($professeurs as $professeur)
+                                            <option value="{{ $professeur->id }}" {{ old('ref_professeur') == $professeur->id ? 'selected' : '' }}>
+                                                {{ $professeur->nom }} {{ $professeur->prenom }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+
+                            <div class="sm:col-span-2">
+                                <label for="collaborateurs" class="block text-sm font-medium text-gray-700">
+                                    Collaborateurs (optionnel)
+                                </label>
+                                <select name="collaborateurs[]" id="collaborateurs" multiple
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    @foreach($collaborateurs as $collaborateur)
+                                        <option value="{{ $collaborateur->id }}" {{ (collect(old('collaborateurs'))->contains($collaborateur->id)) ? 'selected' : '' }}>
+                                            {{ $collaborateur->nom }} {{ $collaborateur->prenom }} 
+                                            ({{ $collaborateur->ref_role == \App\Models\User::ROLE_PROFESSOR ? 'Professeur' : 'Collaborateur' }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         <div class="flex items-center justify-between pt-6">
                             <button type="submit"
                                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Créer l'événement
+                                @if(Auth::user()->ref_role == \App\Models\User::ROLE_STUDENT)
+                                    Demander la création de l'événement
+                                @else
+                                    Créer l'événement
+                                @endif
                             </button>
                             <a href="{{ route('evenement.index') }}"
                                 class="text-sm font-medium text-gray-600 hover:text-gray-500">
@@ -95,6 +132,13 @@
             </div>
         </div>
     </div>
+
+    <!-- Add Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Add jQuery and Select2 JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -125,6 +169,14 @@
                     e.preventDefault();
                 }
             }
+
+            // Initialize Select2 for collaborateurs
+            $('#collaborateurs').select2({
+                placeholder: 'Sélectionnez des collaborateurs',
+                allowClear: true,
+                multiple: true,
+                width: '100%'
+            });
         });
     </script>
 </x-app-layout>

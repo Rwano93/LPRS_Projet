@@ -20,6 +20,9 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
 
+    public const ROLE_STUDENT = 2;
+    public const ROLE_PROFESSOR = 4;
+
     protected $fillable = [
         'nom',
         'prenom',
@@ -45,7 +48,6 @@ class User extends Authenticatable
         'profile_photo_url',
         'cv_url',
     ];
-
     /**
      * Get the URL to the user's profile photo.
      *
@@ -174,5 +176,20 @@ class User extends Authenticatable
     public function getCvUrlAttribute()
     {
         return $this->cv ? Storage::disk('public')->url($this->cv) : null;
+    }
+
+    public function demandesEvenements()
+    {
+        return $this->hasMany(DemandeEvenement::class, 'ref_etudiant');
+    }
+
+    public function evenementsApprouves()
+    {
+        return $this->hasMany(DemandeEvenement::class, 'ref_professeur');
+    }
+
+    public function collaborateurDemandes()
+    {
+        return $this->hasMany(CollaborateurDemande::class, 'ref_collaborateur');
     }
 }

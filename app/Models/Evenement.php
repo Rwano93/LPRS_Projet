@@ -10,6 +10,7 @@ class Evenement extends Model
     use HasFactory;
 
     protected $fillable = [
+        'ref_createur',
         'type',
         'titre',
         'description',

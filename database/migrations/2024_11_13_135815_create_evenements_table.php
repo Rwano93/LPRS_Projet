@@ -6,13 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('evenements', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('ref_createur');
             $table->string('type');
             $table->string('titre');
             $table->text('description');
@@ -20,14 +18,15 @@ return new class extends Migration
             $table->string('adresse');
             $table->text('elementrequis')->nullable();
             $table->integer('nb_place');
+            $table->string('statut')->default('actif');
             $table->timestamps();
+
+            $table->foreign('ref_createur')->references('id')->on('users')->onDelete('cascade');
         });
-
     }
-
 
     public function down(): void
     {
-        //
+        Schema::dropIfExists('evenements');
     }
 };

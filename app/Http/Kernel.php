@@ -54,6 +54,7 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         // ... autres middlewares
+        'professeur' => \App\Http\Middleware\ProfesseurMiddleware::class,
         'entreprise.alumni' => \App\Http\Middleware\EntrepriseAlumni::class,
         'evenement' => \App\Http\Middleware\EvenementMiddleware::class,
         'offre' => \App\Http\Middleware\OffreMiddleware::class,

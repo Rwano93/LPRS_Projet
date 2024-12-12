@@ -209,6 +209,11 @@
                                 <x-dropdown-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
                                     {{ __('Panel Utilisateurs') }}
                                 </x-dropdown-link>
+                                @endif   
+                                @if(Auth::user()->ref_role == 4)
+                                    <x-nav-link href="{{ route('approbation.demandes') }}" :active="request()->routeIs('approbation.demandes')">
+                                        {{ __('Demandes d\'approbation') }}
+                                    </x-nav-link>
                                 @endif
                                 @if(Auth::user()->ref_role == 3 || Auth::user()->ref_role == 5 || Auth::user()->ref_role == 6)
                                 <x-dropdown-link href="{{ route('entreprises.index') }}" :active="request()->routeIs('entreprises.index')">
@@ -305,6 +310,11 @@
                         @else
                             <x-responsive-nav-link href="{{ route('demandes.index') }}">
                                 {{ __('Demande de changement de statut') }}
+                            </x-responsive-nav-link>
+                        @endif
+                        @if(Auth::user()->ref_role == 4)
+                            <x-responsive-nav-link href="{{ route('approbation.demandes') }}" :active="request()->routeIs('approbation.demandes')">
+                                {{ __('Demandes d\'approbation') }}
                             </x-responsive-nav-link>
                         @endif
 
