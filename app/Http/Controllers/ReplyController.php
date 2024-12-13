@@ -10,52 +10,69 @@ use Illuminate\Support\Facades\Storage;
 
 class ReplyController extends Controller
 {
-    /**
-     * Store a newly created reply in the database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $discussionId
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function store(Request $request, Discussion $discussion)
+    public function store(Request $request, $discussionId)
     {
-        // Validation et création de la réponse
         $request->validate([
-            'contenu' => 'required|string',
-            'discussion_id' => 'required|exists:discussions,id',
+            'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        Reply::create([
-            'content' => $request->contenu,
+        $discussion = Discussion::findOrFail($discussionId);
+
+        $reply = new Reply([
+            'content' => $request->content,
+            'user_id' => Auth::id(),
             'discussion_id' => $discussion->id,
-            'user_id' => auth()->id(), // Assurez-vous que l'utilisateur est authentifié
         ]);
 
-        return redirect()->route('discussions.show', $discussion->id)->with('success', 'Réponse ajoutée avec succès.');
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/reply_images', $imageName);
+            $reply->image = $imageName;
+        }
+
+        $reply->save();
+
+        return view('discussions.show', compact('discussion'));
+        
     }
 
-    /**
-     * Delete a reply.
-     *
-     * @param  int  $replyId
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function destroy($replyId)
     {
         $reply = Reply::findOrFail($replyId);
 
-        // Vérifie que l'utilisateur est le propriétaire de la réponse ou a les permissions nécessaires
         if (Auth::id() !== $reply->user_id) {
-            return redirect()->route('discussions.show', $reply->discussion_id)->with('error', 'Vous n\'êtes pas autorisé à supprimer cette réponse.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous n\'êtes pas autorisé à supprimer cette réponse.',
+            ], 403);
         }
 
-        // Supprimer l'image associée si elle existe
         if ($reply->image) {
-            Storage::disk('public')->delete($reply->image);
+            Storage::disk('public')->delete('reply_images/' . $reply->image);
         }
 
         $reply->delete();
 
-        return redirect()->route('discussions.show', $reply->discussion_id)->with('success', 'Réponse supprimée avec succès.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Réponse supprimée avec succès.',
+        ]);
+    }
+
+    public function displayImage($id)
+    {
+        $reply = Reply::findOrFail($id);
+        if ($reply->image) {
+            $path = storage_path('app/public/reply_images/' . $reply->image);
+            if (file_exists($path)) {
+                $file = file_get_contents($path);
+                $type = mime_content_type($path);
+                return response($file)->header('Content-Type', $type);
+            }
+        }
+        abort(404);
     }
 }
+

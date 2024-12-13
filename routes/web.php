@@ -51,19 +51,24 @@ Route::middleware(['auth', ProfesseurMiddleware::class])->group(function () {
 Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])
     ->name('evenement.removeUserFromEvent');
 
-// Forum et discussions
-Route::get('/forum', [DiscussionController::class, 'index'])->name('forum.index'); // Page principale du forum
-Route::get('/discussions/create', [DiscussionController::class, 'create'])->name('discussions.create'); // Formulaire de création
-Route::post('/discussions', [DiscussionController::class, 'store'])->name('discussions.store'); // Sauvegarde de la discussion
-Route::resource('discussions', DiscussionController::class)->except(['index', 'create', 'store']);
-Route::resource('discussions', DiscussionController::class);
+Route::middleware(['auth'])->group(function () {
+    Route::get('/discussions', [DiscussionController::class, 'index'])->name('discussions.index');
+    Route::get('/discussions/create', [DiscussionController::class, 'create'])->name('discussions.create');
+    Route::post('/discussions', [DiscussionController::class, 'store'])->name('discussions.store');
+    Route::get('/discussions/{id}', [DiscussionController::class, 'show'])->name('discussions.show');
+    Route::get('/discussions/image/{id}', [DiscussionController::class, 'displayImage'])->name('discussions.image');
+});
 Route::resource('replies', ReplyController::class);
 Route::post('/replies', [ReplyController::class, 'store'])->name('replies.store');
 Route::get('/discussions/image/{id}', [DiscussionController::class, 'displayImage'])->name('discussions.image');
 Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store'])->name('replies.store');
-Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store'])->name('replies.store');
 Route::resource('discussions', DiscussionController::class);
-Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store'])->name('replies.store');
+Route::get('/replies/image/{id}', [ReplyController::class, 'displayImage'])->name('replies.image');
+Route::post('/discussions/{discussionId}/replies', [ReplyController::class, 'store'])->name('replies.store');
+Route::get('/discussions/search', [DiscussionController::class, 'search'])->name('discussions.search');
+
+
+
 
 // Ajout de routes RESTful pour Discussions
 Route::resource('discussions', DiscussionController::class);

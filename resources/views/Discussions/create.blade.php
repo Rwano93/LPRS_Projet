@@ -1,49 +1,54 @@
-
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
 <x-app-layout>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Créer une Nouvelle Discussion</h1>
+    <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-white py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-4xl font-bold text-center text-indigo-800 mb-8 animate-fade-in-down">Forum de Discussions</h1>
 
-        <form action="{{ route('discussions.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-
-            <div class="mb-3">
-                <label for="title" class="form-label">Titre de la Discussion</label>
-                <input type="text" name="title" id="title" class="form-control" required>
+            <div class="flex justify-center mb-8 animate-fade-in">
+                <a href="{{ route('discussions.create') }}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out transform hover:scale-105">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Créer une Nouvelle Discussion
+                </a>
             </div>
 
-            <div class="mb-3">
-                <label for="content" class="form-label">Contenu de la Discussion</label>
-                <textarea name="content" id="contenu" class="form-control" rows="5" required></textarea>
+            <div id="discussions-container">
+                @include('discussions._list', ['discussions' => $discussions])
             </div>
 
-            <div class="mb-3">
-                <label for="category_id" class="form-label">Catégorie</label>
-                <select name="category_id" id="category_id" class="form-select" required>
-                    <option value="">Sélectionnez une catégorie</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
+            <div id="pagination" class="mt-8 flex justify-center animate-fade-in">
+                {{ $discussions->links() }}
             </div>
-
-
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">Créer la Discussion</button>
-            </div>
-        </form>
-
-        <div class="mt-4 text-center">
-            <a href="{{ route('forum.index') }}" class="btn btn-link">Retour au Forum</a>
         </div>
     </div>
-</x-app-layout>>
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    @push('styles')
+    <style>
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translate3d(0, -20px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.5s ease-out;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+    @endpush
+</x-app-layout>
+

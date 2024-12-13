@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Discussion extends Model
 {
     use HasFactory;
-
 
     protected $fillable = [
         'title',
@@ -18,7 +15,6 @@ class Discussion extends Model
         'category_id',
         'user_id',
         'image',
-
     ];
 
     public function category()
@@ -35,7 +31,5 @@ class Discussion extends Model
     {
         return $this->hasMany(Reply::class);
     }
-
-
-
 }
+

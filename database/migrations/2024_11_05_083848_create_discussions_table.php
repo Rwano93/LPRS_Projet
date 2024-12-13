@@ -17,9 +17,8 @@ return new class extends Migration
             $table->text('content');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->binary('image')->nullable();
             $table->timestamps();
-            $table->binary('image');
-
         });
     }
 
@@ -29,9 +28,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('discussions');
-        Schema::table('discussions', function (Blueprint $table) {
-            $table->dropColumn('image');
-        });
     }
-
 };
+
