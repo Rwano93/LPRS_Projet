@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             OffresTableSeeder::class,
             EvenementsTableSeeder::class,
             ActualitesTableSeeder::class,
+            CategoriesSeeder::class,
         ]);
     
 
