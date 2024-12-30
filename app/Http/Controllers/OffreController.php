@@ -6,12 +6,20 @@ use App\Models\Offre;
 use App\Models\Entreprise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Candidature; // Import the Candidature model
 
 class OffreController extends Controller
 {
     public function index()
     {
-        $offres = Offre::with('entreprise')->get();
+        $user = Auth::user();
+        $offres = Offre::with('entreprise', 'candidatures')->get();
+
+        $offres = $offres->map(function ($offre) use ($user) {
+            $offre->has_applied = $user && $offre->candidatures->contains('user_id', $user->id);
+            return $offre;
+        });
+
         return view('offres.index', compact('offres'));
     }
 
@@ -111,5 +119,26 @@ class OffreController extends Controller
 
         return redirect()->route('offres.index')
             ->with('success', 'Offre d\'emploi supprimée avec succès.');
+    }
+
+    public function postuler(Request $request, Offre $offre)
+    {
+        $user = Auth::user();
+
+        // Vérifier si l'utilisateur a déjà postulé
+        if ($offre->candidatures()->where('user_id', $user->id)->exists()) {
+            return response()->json(['message' => 'Vous avez déjà postulé à cette offre.'], 400);
+        }
+
+        // Créer la candidature
+        $candidature = new Candidature([
+            'user_id' => $user->id,
+            'offre_id' => $offre->id,
+            'motivation' => $request->input('motivation', ''),
+        ]);
+
+        $candidature->save();
+
+        return response()->json(['message' => 'Votre candidature a été enregistrée avec succès.']);
     }
 }

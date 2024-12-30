@@ -1,4 +1,6 @@
 <x-app-layout>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             @if (session('error'))
@@ -91,10 +93,21 @@
                                     @endauth
                                     @auth
                                         @if(Auth::user()->ref_role == 2 || Auth::user()->ref_role == 3)
-                                            <button onclick="applyForJob({{ $offre->id }})"
-                                                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg mr-2">
-                                                Postuler
-                                            </button>
+                                            @if($offre->has_applied)
+                                                <button
+                                                    class="bg-gray-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"
+                                                    disabled
+                                                >
+                                                    Déjà postulé
+                                                </button>
+                                            @else
+                                                <button
+                                                    onclick='applyForJob({{ $offre->id }})'
+                                                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md hover:shadow-lg mr-2"
+                                                >
+                                                    Postuler
+                                                </button>
+                                            @endif
                                         @endif
                                     @endauth
                                     <a href="{{ route('offres.show', $offre->id) }}"
@@ -113,7 +126,6 @@
             @endif
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function confirmDelete(offreId) {
             Swal.fire({
@@ -149,6 +161,9 @@
                 title: 'Postuler à cette offre',
                 text: "Êtes-vous sûr de vouloir postuler à cette offre ?",
                 icon: 'question',
+                input: 'textarea',
+                inputLabel: 'Motivation (optionnel)',
+                inputPlaceholder: 'Entrez votre motivation ici...',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
@@ -156,13 +171,25 @@
                 cancelButtonText: 'Annuler'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Here you would typically send an AJAX request to your backend
-                    // For now, we'll just show a success message
-                    Swal.fire(
-                        'Postulé !',
-                        'Votre candidature a été envoyée avec succès.',
-                        'success'
-                    );
+                    axios.post(`/offres/${offreId}/postuler`, {
+                        motivation: result.value
+                    })
+                    .then(response => {
+                        Swal.fire(
+                            'Postulé !',
+                            response.data.message,
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Erreur !',
+                            error.response.data.message,
+                            'error'
+                        );
+                    });
                 }
             });
         }
@@ -175,3 +202,4 @@
         </form>
     @endforeach
 </x-app-layout>
+

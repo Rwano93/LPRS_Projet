@@ -98,6 +98,7 @@ Route::resource('offres', OffreController::class);
     Route::post('/offres', [OffreController::class, 'store'])->name('offres.store');
     Route::put('/offres/{offre}', [OffreController::class, 'update'])->name('offres.update');
     Route::delete('/offres/{offre}', [OffreController::class, 'destroy'])->name('offres.destroy');
+    Route::post('/offres/{offre}/postuler', [OffreController::class, 'postuler'])->name('offres.postuler');
 });
 
 // Routes pour les demandes de changement de statut
