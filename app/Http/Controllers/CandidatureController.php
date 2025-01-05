@@ -11,62 +11,51 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-
 class CandidatureController extends Controller
 {
-    use AuthorizesRequests;
     public function index(Offre $offre)
     {
-        // On vérifie si l'utilisateur a le droit de voir les candidatures pour cette offre
-        $this->authorize('viewCandidatures', $offre);
+        // Vérifier si l'utilisateur est l'auteur de l'offre
+        if (Auth::id() !== $offre->user_id) {
+            return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à voir ces candidatures.');
+        }
 
-        // On récupère toutes les candidatures pour cette offre avec les informations de l'utilisateur
         $candidatures = $offre->candidatures()->with('user')->get();
-
-        // On retourne la vue avec la liste des candidatures
         return view('candidatures.index', compact('offre', 'candidatures'));
+        
+        $candidatures = $offre->candidatures()->with('user')->get();
+    return view('candidatures.index', compact('offre', 'candidatures'));
     }
 
-    public function store(Request $request, Offre $offre)
+    public function accepter(Candidature $candidature)
     {
-        // Validation des données du formulaire<
-        $request->validate([
-            'lettre_motivation' => 'required',
-            'cv' => 'required|file|mimes:pdf,doc,docx|max:2048',
-        ]);
+        // Vérifier si l'utilisateur est l'auteur de l'offre
+        if (Auth::id() !== $candidature->offre->user_id) {
+            return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à effectuer cette action.');
+        }
 
-        // Création d'une nouvelle candidature
-        $candidature = new Candidature([
-            'lettre_motivation' => $request->lettre_motivation,
-            'cv_path' => $request->file('cv')->store('cvs', 'public'),
-        ]);
-
-        // Association de la candidature à l'utilisateur connecté et à l'offre
-        $candidature->user()->associate(Auth::user());
-        $candidature->offre()->associate($offre);
+        $candidature->statut = 'acceptée';
         $candidature->save();
 
-        // Envoi d'une notification à l'auteur de l'offre
-        $offre->user->notify(new NouvelleCandidatureNotification($candidature));
+        // Envoyer un email au candidat
+        Mail::to($candidature->user->email)->send(new \App\Mail\CandidatureAcceptee($candidature));
 
-        // Redirection avec un message de succès
-        return back()->with('success', 'Votre candidature a été soumise avec succès.');
-        
+        return redirect()->back()->with('success', 'La candidature a été acceptée.');
     }
 
-    public function destroy(Candidature $candidature)
+    public function refuser(Candidature $candidature)
     {
-        // On vérifie si l'utilisateur a le droit de supprimer cette candidature
-        $this->authorize('delete', $candidature);
+        // Vérifier si l'utilisateur est l'auteur de l'offre
+        if (Auth::id() !== $candidature->offre->user_id) {
+            return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à effectuer cette action.');
+        }
 
-        // Envoi d'un email à l'étudiant pour l'informer que sa candidature n'a pas été retenue
-        Mail::to($candidature->user->email)->send(new CandidatureRejetee($candidature));
+        $candidature->statut = 'refusée';
+        $candidature->save();
 
-        // Suppression de la candidature
-        $candidature->delete();
+        // Envoyer un email au candidat
+        Mail::to($candidature->user->email)->send(new \App\Mail\CandidatureRefusee($candidature));
 
-        // Redirection avec un message de succès
-        return back()->with('success', 'La candidature a été supprimée et l\'étudiant a été notifié.');
+        return redirect()->back()->with('success', 'La candidature a été refusée.');
     }
 }
-

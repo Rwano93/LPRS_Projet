@@ -21,6 +21,7 @@ use App\Http\Middleware\EntrepriseAlumni;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\ForumController;
 use App\Http\Middleware\ProfesseurMiddleware;
+use App\Http\Controllers\CandidatureController;
 
 
 
@@ -149,3 +150,7 @@ Route::middleware([
     Route::get('/dashboard', [AccueilController::class, 'index'])->name('dashboard');
 
 });
+Route::get('/offres/{offre}/candidatures', [CandidatureController::class, 'index'])->name('candidatures.index');
+Route::post('/candidatures/{candidature}/accepter', [CandidatureController::class, 'accepter'])->name('candidatures.accepter');
+Route::post('/candidatures/{candidature}/refuser', [CandidatureController::class, 'refuser'])->name('candidatures.refuser');
+Route::get('/offres/{offre}/candidatures', [CandidatureController::class, 'index'])->name('candidatures.index');

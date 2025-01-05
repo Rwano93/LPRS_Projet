@@ -48,6 +48,10 @@
                                             class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1">
                                         Supprimer
                                     </button>
+                                    <a href="{{ route('candidatures.index', $offre->id) }}"
+                                       class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1">
+                                        Gérer les candidatures
+                                    </a>
                                 @endif
                             @endauth
                             <a href="{{ route('offres.index') }}"
@@ -91,4 +95,3 @@
         }
     </script>
 </x-app-layout>
-
