@@ -84,6 +84,11 @@ Gérer l'espace client/evenements/forum/offres de stages pour les étudiants etc
    ```bash
    php artisan migrate
    ```
+9. Exécute les seeders :
+
+   ```bash
+   php artisan db:seed
+   ```
 
 10. (Facultatif) Si tu utilises Jetstream avec des fonctionnalités supplémentaires (comme la gestion des équipes), n'oublie pas de publier les fichiers de configuration :
 
@@ -91,10 +96,11 @@ Gérer l'espace client/evenements/forum/offres de stages pour les étudiants etc
    php artisan jetstream:install livewire
    ```
 
-10.(Opérationnel) Si tu a besoin d'utiliser les roles pour les gestion de status, tu auras besoin de cela pour afficher et gérer les utilisateurs status. 
+11.(Opérationnel) Si tu a besoin d'utiliser les roles pour les gestion de status, tu auras besoin de cela pour afficher et gérer les utilisateurs status. 
  ```bash
  composer require spatie/laravel-permission
  ```
+
 ## Configuration
 
 - Configure les paramètres de la base de données dans le fichier `.env`.
