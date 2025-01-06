@@ -40,7 +40,7 @@ Route::middleware(['auth', OffreMiddleware::class])->group(function () {
     Route::delete('/evenements/{evenement}/desinscription', [EvenementController::class, 'desinscription'])->name('evenement.desinscription');
     Route::get('/evenements/{evenement}/inscrits', [EvenementController::class, 'inscrits'])->name('evenement.inscrits');
     Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])->name('evenement.removeUserFromEvent');
-    
+
 });
 Route::middleware(['auth', ProfesseurMiddleware::class])->group(function () {
     Route::get('/approbation/demandes', [EvenementController::class, 'demandes'])->name('approbation.demandes');
@@ -67,6 +67,11 @@ Route::resource('discussions', DiscussionController::class);
 Route::get('/replies/image/{id}', [ReplyController::class, 'displayImage'])->name('replies.image');
 Route::post('/discussions/{discussionId}/replies', [ReplyController::class, 'store'])->name('replies.store');
 Route::get('/discussions/search', [DiscussionController::class, 'search'])->name('discussions.search');
+Route::middleware(['auth'])->group(function () {Route::get('/discussions', [DiscussionController::class, 'index'])->name('discussions.index');
+});
+Route::middleware(['auth'])->group(function () {
+    Route::resource('discussions', DiscussionController::class);
+});
 
 
 
@@ -137,7 +142,7 @@ Route::middleware(['auth', EntrepriseAlumni::class])->group(function () {
 
 
 });
-    
+
 
 Route::get('cv/{filename}', [FileController::class, 'serveFile'])->name('serve.cv');
 
