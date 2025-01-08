@@ -60,7 +60,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/discussions/{discussion}', [DiscussionController::class, 'destroy'])->name('discussions.destroy');
     Route::get('/discussions/{discussion}/edit', [DiscussionController::class, 'edit'])->name('discussions.edit');
     Route::put('/discussions/{discussion}', [DiscussionController::class, 'update'])->name('discussions.update');
-
+    Route::get('/discussions/{discussion}/replies/{reply}', [ReplyController::class, 'edit'])->name('replies.edit');
+    Route::put('/discussions/{discussion}/replies/{reply}', [ReplyController::class, 'update'])->name('replies.update');
+    Route::delete('/discussions/{discussion}/replies/{reply}', [ReplyController::class, 'destroy'])->name('replies.destroy');
+    
 });
 
     

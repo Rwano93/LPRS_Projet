@@ -2,6 +2,7 @@
     <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-white py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <h1 class="text-4xl font-bold text-center text-indigo-800 mb-8 animate-fade-in-down">Forum de Discussions</h1>
+
             <div class="flex justify-center mb-8 animate-fade-in">
                 <a href="{{ route('discussions.create') }}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out transform hover:scale-105">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -28,8 +29,9 @@
                             </h2>
                             <p class="text-gray-600 mb-4">{{ Str::limit($discussion->content, 100) }}</p>
                             @if($discussion->image)
-                                <img src="{{ route('discussions.image', $discussion->id) }}" alt="Image de la discussion" class="w-full h-32 object-cover rounded-md mb-4">
+                                <img src="{{ Storage::url('discussion_images/' . $discussion->image) }}" alt="Image de la discussion" class="w-full h-32 object-cover rounded-md mb-4">
                             @endif
+
                             <div class="flex justify-between items-center text-sm text-gray-500">
                                 <span>Par <strong class="text-indigo-600">{{ $discussion->user->prenom }} {{ $discussion->user->nom }}</strong></span>
                                 <span>{{ $discussion->created_at->format('d M Y') }}</span>
@@ -82,4 +84,3 @@
     </style>
     @endpush
 </x-app-layout>
-

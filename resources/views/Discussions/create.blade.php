@@ -24,7 +24,12 @@
 
                 <div class="mb-4">
                     <label for="content" class="block text-lg font-medium text-gray-700">Contenu de la Discussion</label>
-                    <textarea name="content" id="contenu" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required></textarea>
+                    <textarea name="content" id="content" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label for="image" class="block text-lg font-medium text-gray-700">Image de la Discussion</label>
+                    <input type="file" name="image" id="image" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
 
                 <div class="mb-4">
