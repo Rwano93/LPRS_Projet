@@ -90,36 +90,53 @@ class OffreController extends Controller
 
     public function edit(Offre $offre)
     {
+        if (Auth::user()->id !== $offre->user_id) {
+            return redirect()->route('offres.index')
+                ->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
+        }
+
         $entreprises = Entreprise::all();
         return view('offres.edit', compact('offre', 'entreprises'));
     }
 
+
     public function update(Request $request, Offre $offre)
-    {
-        // Validation des données pour la mise à jour
-        $request->validate([
-            'titre' => 'required|max:255',
-            'description' => 'required',
-            'missions' => 'required',
-            'type' => 'required|in:CDI,CDD,alternance,stage',
-            'salaire' => 'nullable|numeric',
-            'entreprise_id' => 'required|exists:entreprises,id', // Vérifie que l'ID de l'entreprise existe
-        ]);
-
-        // Mettre à jour l'offre d'emploi
-        $offre->update($request->all());
-
+{
+    if (Auth::user()->id !== $offre->user_id) {
         return redirect()->route('offres.index')
-            ->with('success', 'Offre d\'emploi mise à jour avec succès.');
+            ->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
     }
 
-    public function destroy(Offre $offre)
-    {
-        $offre->delete();
+    // Validation des données pour la mise à jour
+    $request->validate([
+        'titre' => 'required|max:255',
+        'description' => 'required',
+        'missions' => 'required',
+        'type' => 'required|in:CDI,CDD,alternance,stage',
+        'salaire' => 'nullable|numeric',
+        'entreprise_id' => 'required|exists:entreprises,id', // Vérifie que l'ID de l'entreprise existe
+    ]);
 
+    // Mettre à jour l'offre d'emploi
+    $offre->update($request->all());
+
+    return redirect()->route('offres.index')
+        ->with('success', 'Offre d\'emploi mise à jour avec succès.');
+}
+
+
+public function destroy(Offre $offre)
+{
+    if (Auth::user()->id !== $offre->user_id) {
         return redirect()->route('offres.index')
-            ->with('success', 'Offre d\'emploi supprimée avec succès.');
+            ->with('error', 'Vous n\'avez pas les permissions pour supprimer cette offre.');
     }
+
+    $offre->delete();
+
+    return redirect()->route('offres.index')
+        ->with('success', 'Offre d\'emploi supprimée avec succès.');
+}
 
     public function postuler(Request $request, Offre $offre)
     {
@@ -141,4 +158,5 @@ class OffreController extends Controller
 
         return response()->json(['message' => 'Votre candidature a été enregistrée avec succès.']);
     }
+    
 }
