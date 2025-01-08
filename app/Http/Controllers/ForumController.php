@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Discussion;
 use Illuminate\Http\Request;
+use App\Models\Catagory;
 
 class ForumController extends Controller
 {
@@ -12,6 +13,7 @@ class ForumController extends Controller
         $discussions = Discussion::with('category', 'user')->latest()->paginate(10);
         return view('discussions.index', compact('discussions'));
     }
+
 
     public function show($id)
     {

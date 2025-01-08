@@ -48,9 +48,13 @@
                 <a href="{{ route('forum.index') }}" class="text-indigo-600 hover:underline">Retour au Forum</a>
             </div>
 
-            <div id="pagination" class="mt-8 flex justify-center animate-fade-in">
-                {{ $discussions->links() }}
-            </div>
+            @if(isset($discussions) && $discussions->count())
+                <div id="pagination" class="mt-8 flex justify-center animate-fade-in">
+                    {{ $discussions->links() }}
+                </div>
+            @endif
+
+
         </div>
     </div>
 

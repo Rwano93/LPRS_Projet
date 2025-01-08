@@ -42,45 +42,28 @@ Route::middleware(['auth', OffreMiddleware::class])->group(function () {
     Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])->name('evenement.removeUserFromEvent');
 
 });
+Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])
+    ->name('evenement.removeUserFromEvent');
+
+    
 Route::middleware(['auth', ProfesseurMiddleware::class])->group(function () {
     Route::get('/approbation/demandes', [EvenementController::class, 'demandes'])->name('approbation.demandes');
     Route::patch('/approbation/demandes/{demande}/approuver', [EvenementController::class, 'approuverDemande'])->name('evenement.approuverDemande');
     Route::patch('/approbation/demandes/{demande}/refuser', [EvenementController::class, 'refuserDemande'])->name('evenement.refuserDemande');
 });
 
-
-Route::delete('/evenements/{evenement}/users/{user}', [EvenementController::class, 'removeUserFromEvent'])
-    ->name('evenement.removeUserFromEvent');
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/discussions', [DiscussionController::class, 'index'])->name('discussions.index');
-    Route::get('/discussions/create', [DiscussionController::class, 'create'])->name('discussions.create');
     Route::post('/discussions', [DiscussionController::class, 'store'])->name('discussions.store');
-    Route::get('/discussions/{id}', [DiscussionController::class, 'show'])->name('discussions.show');
-    Route::get('/discussions/image/{id}', [DiscussionController::class, 'displayImage'])->name('discussions.image');
-});
-Route::resource('replies', ReplyController::class);
-Route::post('/replies', [ReplyController::class, 'store'])->name('replies.store');
-Route::get('/discussions/image/{id}', [DiscussionController::class, 'displayImage'])->name('discussions.image');
-Route::post('/discussions/{discussion}/replies', [ReplyController::class, 'store'])->name('replies.store');
-Route::resource('discussions', DiscussionController::class);
-Route::get('/replies/image/{id}', [ReplyController::class, 'displayImage'])->name('replies.image');
-Route::post('/discussions/{discussionId}/replies', [ReplyController::class, 'store'])->name('replies.store');
-Route::get('/discussions/search', [DiscussionController::class, 'search'])->name('discussions.search');
-Route::middleware(['auth'])->group(function () {Route::get('/discussions', [DiscussionController::class, 'index'])->name('discussions.index');
-});
-Route::middleware(['auth'])->group(function () {
-    Route::resource('discussions', DiscussionController::class);
+    Route::get('/discussions/create', [DiscussionController::class, 'create'])->name('discussions.create');
+    Route::get('/discussions/{discussion}', [DiscussionController::class, 'show'])->name('discussions.show');
+    Route::delete('/discussions/{discussion}', [DiscussionController::class, 'destroy'])->name('discussions.destroy');
+    Route::get('/discussions/{discussion}/edit', [DiscussionController::class, 'edit'])->name('discussions.edit');
+    Route::put('/discussions/{discussion}', [DiscussionController::class, 'update'])->name('discussions.update');
+
 });
 
-
-
-
-// Ajout de routes RESTful pour Discussions
-Route::resource('discussions', DiscussionController::class);
-Route::get('/discussions', [DiscussionController::class, 'index'])->name('discussion.index');
-
-
+    
 // Routes pour les actualités
 Route::middleware(['auth'])->group(function () {
     Route::resource('actualites', ActualiteController::class);
