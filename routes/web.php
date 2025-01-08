@@ -63,11 +63,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/discussions/{discussion}/replies/{reply}', [ReplyController::class, 'edit'])->name('replies.edit');
     Route::put('/discussions/{discussion}/replies/{reply}', [ReplyController::class, 'update'])->name('replies.update');
     Route::delete('/discussions/{discussion}/replies/{reply}', [ReplyController::class, 'destroy'])->name('replies.destroy');
-    
+    Route::get('/replies/{id}/image', [ReplyController::class, 'displayImage'])->name('replies.image');
+
 });
 
     
-// Routes pour les actualités
+// Routes pour les actualitésRoute::get('/replies/{id}/image', [ReplyController::class, 'displayImage'])->name('replies.image');
+
 Route::middleware(['auth'])->group(function () {
     Route::resource('actualites', ActualiteController::class);
 });
