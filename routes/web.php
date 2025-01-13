@@ -22,6 +22,16 @@ use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\ForumController;
 use App\Http\Middleware\ProfesseurMiddleware;
 use App\Http\Controllers\CandidatureController;
+use App\Http\Controllers\MessageController;
+
+Route::middleware(['auth'])->group(function () {
+
+Route::resource('messages', MessageController::class)->only(['index', 'create', 'store', 'show']);
+Route::get('messages/{conversation}', [MessageController::class, 'show'])->name('messages.show');
+
+});
+
+
 
 
 

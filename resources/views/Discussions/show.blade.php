@@ -7,7 +7,10 @@
                         {{ $discussion->title }}
                     </h1>
                     <p class="text-gray-600 mb-6">
-                        Créé par <span class="font-semibold text-indigo-600">{{ $discussion->user->prenom }} {{ $discussion->user->nom }}</span> 
+                        Créé par 
+                        <a href="{{ route('messages.create', $discussion->user->id) }}" class="font-semibold text-indigo-600 hover:text-indigo-800">
+                            {{ $discussion->user->prenom }} {{ $discussion->user->nom }}
+                        </a> 
                         le {{ $discussion->created_at->format('d M Y à H:i') }}
                     </p>
                     
@@ -17,7 +20,7 @@
                     
                     @if($discussion->image)
                         <div class="mt-6">
-                            <img src="{{ route('discussions.image', $discussion->id) }}" alt="Image de la discussion" class="w-full h-auto rounded-lg shadow-md">
+                            <img src="{{ Storage::url('discussion_images/' . $discussion->image) }}" alt="Image de la discussion" class="w-full h-auto rounded-lg shadow-md">
                         </div>
                     @endif
                 </div>
@@ -143,4 +146,3 @@
     </style>
     @endpush
 </x-app-layout>
-
